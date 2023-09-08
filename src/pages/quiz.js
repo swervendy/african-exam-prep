@@ -8,7 +8,6 @@ export default function Quiz() {
   const [score, setScore] = useState(0);
   const [questionIndex, setQuestionIndex] = useState(0);
 
-  // Ensure that localStorage is accessed in a useEffect to avoid issues during server-side rendering
   const [userUUID, setUserUUID] = useState(null);
 
   useEffect(() => {

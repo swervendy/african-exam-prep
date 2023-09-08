@@ -1,11 +1,11 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
-import openai from 'openai';
 
 function Index() {
   const [topic, setTopic] = useState('');
   const router = useRouter();
   const [userUUID, setUserUUID] = useState('');
+  const [sessionMessage, setSessionMessage] = useState(null);
 
   useEffect(() => {
     const storedUUID = localStorage.getItem('userUUID');
@@ -48,10 +48,14 @@ function Index() {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ topic, uuid: userUUID }), // Include the UUID here
+        body: JSON.stringify({ topic, uuid: userUUID }),
       });
 
-      if (response.ok) {
+      const data = await response.json();
+
+      if (data.message) {
+        setSessionMessage(data.message);
+      } else if (response.ok) {
         router.push('/quiz');
       } else {
         console.error('Failed to generate questions.');
@@ -65,6 +69,7 @@ function Index() {
     <main className="flex min-h-screen flex-col items-center justify-center">
       <div className="z-10 w-full max-w-xl m-auto items-center justify-between px-8 lg:flex">
         <h1 className="text-3xl text-center font-bold mb-4">Choose a Quiz Topic</h1>
+        {sessionMessage && <p>{sessionMessage}</p>}
         <form onSubmit={handleSubmit} className="w-full">
           <input
             type="text"

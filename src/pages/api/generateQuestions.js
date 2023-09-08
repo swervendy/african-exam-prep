@@ -19,8 +19,11 @@ export default async (req, res) => {
 
     const db = await connectToDB();
     const questionsCollection = db.collection('questions');
-    const topicsCollection = db.collection('topics');
 
+    // Remove any existing questions for the given UUID
+    await questionsCollection.deleteOne({ uuid });
+
+    // Insert the new questions
     await questionsCollection.insertOne({ 
       uuid, 
       questions, 
@@ -28,13 +31,14 @@ export default async (req, res) => {
       topic 
     });
 
+    const topicsCollection = db.collection('topics');
     await topicsCollection.insertOne({
       uuid,
       topicName: topic,
       createdAt: new Date()
     });
 
-    return res.status(200).json({ success: true });
+    return res.status(200).json({ success: true, questions });
   } catch (error) {
     console.error(error.message);
     res.status(500).json({ error: error.message });
