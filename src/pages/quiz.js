@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { useRouter } from 'next/router';
 import { shuffleArray } from '@/lib/util';
 import ButtonAnswer from '@/components/ButtonAnswer';
 
@@ -7,6 +8,7 @@ export default function Quiz() {
   const [gameStatus, setGameStatus] = useState('playing');
   const [score, setScore] = useState(0);
   const [questionIndex, setQuestionIndex] = useState(0);
+  const router = useRouter();
 
   const [userUUID, setUserUUID] = useState(null);
 
@@ -39,7 +41,7 @@ export default function Quiz() {
   const totalQuestions = questions.length;
   const question = questions[questionIndex];
 
-  function startOver() {
+  function tryAgain() {
     setGameStatus('playing');
     setScore(0);
     setQuestionIndex(0);
@@ -54,9 +56,18 @@ export default function Quiz() {
             <p className="text-xl text-center font-bold mb-12">
               Your score was {score} / {totalQuestions}
             </p>
-            <p className="text-xl text-center font-bold mb-12">
-              <button onClick={startOver}>Start Over</button>
-            </p>
+            <div className="flex justify-center space-x-4 mt-6">
+              <button 
+                onClick={tryAgain} 
+                className="flex justify-center items-center w-full h-full text-lg uppercase font-bold hover:text-slate-600 bg-white dark:bg-slate-500 hover:bg-yellow-300 border-4 border-cyan-300 hover:border-yellow-500 py-2 px-4 rounded">
+                Try this quiz again
+              </button>
+              <button 
+                onClick={() => router.push('/')} 
+                className="flex justify-center items-center w-full h-full text-lg uppercase font-bold hover:text-slate-600 bg-white dark:bg-slate-500 hover:bg-yellow-300 border-4 border-cyan-300 hover:border-yellow-500 py-2 px-4 rounded">
+                Create a new quiz
+              </button>
+            </div>
           </div>
         )}
         {gameStatus === 'playing' && question && (
