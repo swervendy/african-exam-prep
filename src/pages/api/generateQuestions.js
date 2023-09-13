@@ -1,4 +1,3 @@
-/* eslint-disable import/no-anonymous-default-export */
 import { connectToDB } from '../../lib/db';
 import { generateTriviaQuestions } from '../../scripts/generate-questions';
 
@@ -16,14 +15,10 @@ export default async (req, res) => {
 
   try {
     const questions = await generateTriviaQuestions(topic);
-
     const db = await connectToDB();
-    const questionsCollection = db.collection('questions');
-
-    // Remove any existing questions for the given UUID
-    await questionsCollection.deleteOne({ uuid });
 
     // Insert the new questions
+    const questionsCollection = db.collection('questions');
     await questionsCollection.insertOne({ 
       uuid, 
       questions, 
@@ -31,6 +26,7 @@ export default async (req, res) => {
       topic 
     });
 
+    // Insert the topic
     const topicsCollection = db.collection('topics');
     await topicsCollection.insertOne({
       uuid,

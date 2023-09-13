@@ -10,15 +10,20 @@ export default function Quiz() {
   const [questionIndex, setQuestionIndex] = useState(0);
   const router = useRouter();
 
-  const [userUUID, setUserUUID] = useState(null);
+  const [sessionID, setSessionID] = useState(null); // Using sessionID instead of userUUID
 
   useEffect(() => {
-    setUserUUID(localStorage.getItem('userUUID'));
+    const retrievedUUID = localStorage.getItem('userUUID');
+    const sessionTimestamp = localStorage.getItem('sessionTimestamp'); // Retrieve the session timestamp
+    const combinedUUID = `${retrievedUUID}-${sessionTimestamp}`; // Combine them
+    console.log("Retrieved sessionID:", combinedUUID);  // Log the retrieved sessionID
+    setSessionID(combinedUUID); // Set the combined UUID as sessionID
 
     async function fetchQuestions() {
       try {
-        const response = await fetch(`/api/getQuestions?uuid=${userUUID}`);
+        const response = await fetch(`/api/getQuestions?uuid=${sessionID}`); // Use sessionID here
         const data = await response.json();
+        console.log("API Response:", data);  // Log the API response
 
         if (Array.isArray(data)) {
           setQuestions(data.map(q => ({
@@ -33,10 +38,10 @@ export default function Quiz() {
       }
     }
 
-    if (userUUID) {
+    if (sessionID) {
       fetchQuestions();
     }
-  }, [userUUID]);
+  }, [sessionID]); // Watch for changes in sessionID
 
   const totalQuestions = questions.length;
   const question = questions[questionIndex];

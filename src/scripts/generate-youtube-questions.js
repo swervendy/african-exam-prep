@@ -13,13 +13,16 @@ const shape = [{
   "wrongAnswers": ["Obi-Wan Kenobi", "Emperor Palpatine", "Yoda"]
 }];
 
-export const generateTriviaQuestions = async (userTopic = 'default topic') => {
+export const generateYoutubeTriviaQuestions = async (transcriptArray = []) => {
+  const transcriptText = transcriptArray.map(item => item.text).join(' ');
+
   const completion = await openai.chat.completions.create({
-    model: "gpt-3.5-turbo",
+    model: "gpt-3.5-turbo-16k",
     messages: [{
       role: "user", 
       content: `
-        generate 10 trivia questions about ${userTopic}. include wrong answers
+        generate 10 trivia questions based on this YouTube transcript: ${transcriptText}. 
+        include wrong answers
         format the response as JSON in the shape of: ${JSON.stringify(shape)}
       `
     }],
@@ -30,9 +33,9 @@ export const generateTriviaQuestions = async (userTopic = 'default topic') => {
 };
 
 if (require.main === module) {
-  (async () => {
-    const userTopic = process.argv[2];
-    const questions = await generateTriviaQuestions(userTopic);
-    console.log(JSON.stringify(questions, null, 2));
-  })();
-}
+    (async () => {
+      const transcriptArray = JSON.parse(process.argv[2]);
+      const questions = await generateYoutubeTriviaQuestions(transcriptArray);
+      console.log(JSON.stringify(questions, null, 2));
+    })();
+  }  
