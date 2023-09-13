@@ -4,6 +4,7 @@ import { useRouter } from 'next/router';
 function Index() {
   const [topic, setTopic] = useState('');
   const [youtubeURL, setYoutubeURL] = useState('');
+  const [url, setUrl] = useState('');
   const [tab, setTab] = useState('topic'); // 'topic' or 'youtube'
   const router = useRouter();
   const [userUUID, setUserUUID] = useState('');
@@ -100,6 +101,24 @@ function Index() {
             } else {
                 console.error('Failed to get YouTube transcript:', transcriptData.error);
             }
+        } else if (tab === 'url') {
+            // New code for handling URL submission
+            const response = await fetch('/api/generateUrlQuestions', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ url: url, uuid: sessionID }), // Use the sessionID here
+            });
+
+            const data = await response.json();
+
+            if (data && Array.isArray(data.questions) && data.questions.length > 0) {
+                // If questions were successfully generated, redirect to the quiz page
+                router.push('/quiz');
+            } else {
+                console.error('Failed to generate questions or no questions available.');
+            }
         }
     } catch (error) {
         console.error('Error in handleSubmit:', error);
@@ -121,43 +140,57 @@ return (
       </button>
       <button 
         onClick={() => setTab('youtube')}
-        className={`px-4 py-2 rounded ${tab === 'youtube' ? 'bg-blue-500 text-white' : 'bg-gray-200'}`}
+        className={`px-4 py-2 mr-2 rounded ${tab === 'youtube' ? 'bg-blue-500 text-white' : 'bg-gray-200'}`}
       >
         YouTube
       </button>
-    </div>
-    <div className="z-10 w-full max-w-xl m-auto items-center justify-between px-8 lg:flex">
-      <form onSubmit={handleSubmit} className="w-full">
-        {tab === 'topic' ? (
-          <input
-            type="text"
-            placeholder="Enter a topic"
-            value={topic}
-            onChange={(e) => setTopic(e.target.value)}
-            className="w-full p-2 border rounded mb-4"
-          />
-        ) : (
-          <input
-            type="text"
-            placeholder="Enter a YouTube URL"
-            value={youtubeURL}
-            onChange={(e) => setYoutubeURL(e.target.value)}
-            className="w-full p-2 border rounded mb-4"
-          />
-        )}
-        <button type="submit" disabled={isLoading} className="flex justify-center items-center w-full h-full text-lg uppercase font-bold hover:text-slate-600 bg-white dark:bg-slate-500 hover:bg-yellow-300 border-4 border-cyan-300 hover:border-yellow-500 py-4 px-16 rounded">
-          {isLoading ? (
-            <>
-              <div className="loader inline-block mr-2"></div>
-              Building your quiz! This may take a sec...
-            </>
-          ) : (
-            'Start Quiz'
-          )}
-        </button>
-      </form>
-    </div>
-  </main>
-)};
-
-export default Index;
+      <button 
+        onClick={() => setTab('url')}
+        className={`px-4 py-2 rounded ${tab === 'url' ? 'bg-blue-500 text-white' : 'bg-gray-200'}`}
+      >
+        URL
+      </button>
+            </div>
+            <div className="z-10 w-full max-w-xl m-auto items-center justify-between px-8 lg:flex">
+              <form onSubmit={handleSubmit} className="w-full">
+                {tab === 'topic' ? (
+                  <input
+                    type="text"
+                    placeholder="Enter a topic"
+                    value={topic}
+                    onChange={(e) => setTopic(e.target.value)}
+                    className="w-full p-2 border rounded mb-4"
+                  />
+                ) : tab === 'youtube' ? (
+                  <input
+                    type="text"
+                    placeholder="Enter a YouTube URL"
+                    value={youtubeURL}
+                    onChange={(e) => setYoutubeURL(e.target.value)}
+                    className="w-full p-2 border rounded mb-4"
+                  />
+                ) : (
+                  <input
+                    type="text"
+                    placeholder="Enter a URL"
+                    value={url}
+                    onChange={(e) => setUrl(e.target.value)}
+                    className="w-full p-2 border rounded mb-4"
+                  />
+                )}
+                <button type="submit" disabled={isLoading} className="flex justify-center items-center w-full h-full text-lg uppercase font-bold hover:text-slate-600 bg-white dark:bg-slate-500 hover:bg-yellow-300 border-4 border-cyan-300 hover:border-yellow-500 py-4 px-16 rounded">
+                {isLoading ? (
+                    <>
+                      <div className="loader inline-block mr-2"></div>
+                      Building your quiz! This may take a sec...
+                    </>
+                  ) : (
+                    'Start Quiz'
+                  )}
+                </button>
+              </form>
+            </div>
+          </main>
+        )};
+        
+        export default Index;
