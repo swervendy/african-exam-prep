@@ -111,7 +111,7 @@ function Index() {
 return (
   <main className="flex min-h-screen flex-col items-center justify-start pt-20">
     <h1 className="text-4xl font-bold mb-3">Quiz Anything</h1>
-    <p className="text-xl mb-6">Make a quiz about any topic or from a YouTube video</p>
+    <p className="text-xl mb-6">Make a quiz about any topic, YouTube video, or URL</p>
     <div className="tabs mb-4">
       <button 
         onClick={() => setTab('topic')}
