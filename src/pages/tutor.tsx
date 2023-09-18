@@ -3,6 +3,8 @@ import MessagesList from '../components/MessageList'
 import { NextPage } from 'next'
 import { MessagesProvider } from '../utils/useMessages'
 import Layout from '../components/Layout'
+import { useRouter } from 'next/router'
+
 
 const IndexPage: NextPage = () => {
   return (
