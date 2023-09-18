@@ -48,21 +48,30 @@ export default function Quiz() {
   const question = questions[questionIndex];
 
   function handleAnswerClick(answer) {
-    setUserAnswers(prev => [...prev, { question: question.question, userAnswer: answer }]);
-
-    if (answer === question.answer) {
-      setScore(prev => prev + 1);
-    }
-    if (questionIndex + 1 === questions.length) {
-      setGameStatus('finished');
-      storeUserAnswers();
-    } else {
-      setQuestionIndex(prev => prev + 1);
-    }
+    setUserAnswers(prev => {
+      const updatedAnswers = [...prev, { question: question.question, userAnswer: answer }];
+  
+      if (answer === question.answer) {
+        setScore(prev => prev + 1);
+      }
+  
+      const newQuestionIndex = questionIndex + 1;
+      setQuestionIndex(newQuestionIndex);
+  
+      if (newQuestionIndex === questions.length) {
+        setGameStatus('finished');
+        storeUserAnswers(updatedAnswers);  // Pass the updated answers
+      }
+  
+      return updatedAnswers;
+    });
   }
-
-  async function storeUserAnswers() {
+  
+  async function storeUserAnswers(updatedAnswers) {
     try {
+      // Store the user's answers in local storage
+      localStorage.setItem('userAnswers', JSON.stringify(updatedAnswers));
+  
       const response = await fetch('/api/storeUserAnswers', {
         method: 'POST',
         headers: {
@@ -70,12 +79,16 @@ export default function Quiz() {
         },
         body: JSON.stringify({
           sessionID: sessionID,
-          userAnswers: userAnswers,
+          userAnswers: updatedAnswers,
         }),
       });
       const data = await response.json();
       console.log('storeUserAnswers response:', data);
-
+  
+      // Store the score and total number of questions in local storage
+      localStorage.setItem('score', score);
+      localStorage.setItem('totalQuestions', questions.length);
+  
       router.push(`/review?sessionID=${sessionID}`);
     } catch (error) {
       console.error('Error storing user answers:', error);

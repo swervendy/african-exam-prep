@@ -9,16 +9,23 @@ export default function Review() {
 
   useEffect(() => {
     const sessionID = router.query.sessionID;
-
+  
+    // Retrieve the score, total number of questions, and user's answers from local storage
+    const retrievedScore = localStorage.getItem('score');
+    const retrievedTotalQuestions = localStorage.getItem('totalQuestions');
+    const retrievedUserAnswers = JSON.parse(localStorage.getItem('userAnswers'));
+    setScore(retrievedScore);
+    setTotalQuestions(retrievedTotalQuestions);
+    setUserAnswers(retrievedUserAnswers);
+  
     async function fetchUserAnswers() {
       try {
         const response = await fetch(`/api/getUserAnswers?sessionID=${sessionID}`);
         const data = await response.json();
         console.log('getUserAnswers response:', data);
-
+  
+        // Update the user's answers with the server's response
         setUserAnswers(data.userAnswers);
-        setScore(data.score);
-        setTotalQuestions(data.totalQuestions);
       } catch (error) {
         console.error('Error fetching user answers:', error);
       }
