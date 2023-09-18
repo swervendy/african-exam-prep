@@ -2,6 +2,7 @@ import { connectToDB } from '../../lib/db';
 import { generateTriviaQuestions } from '../../scripts/generate-questions';
 
 export default async (req, res) => {
+  console.log('Starting to generate questions...');
   if (req.method !== 'POST') {
     return res.status(405).end(); // Method Not Allowed
   }
@@ -15,7 +16,9 @@ export default async (req, res) => {
 
   try {
     const questions = await generateTriviaQuestions(topic);
+    console.log('Questions generated successfully');
     const db = await connectToDB();
+    console.log('Connected to DB successfully');
 
     // Insert the new questions
     const questionsCollection = db.collection('questions');
@@ -25,6 +28,7 @@ export default async (req, res) => {
       createdAt: new Date(), 
       topic 
     });
+    console.log('Questions inserted into DB successfully');
 
     // Insert the topic
     const topicsCollection = db.collection('topics');
@@ -33,10 +37,11 @@ export default async (req, res) => {
       topicName: topic,
       createdAt: new Date()
     });
+    console.log('Topic inserted into DB successfully');
 
     return res.status(200).json({ success: true, questions });
   } catch (error) {
-    console.error(error.message);
+    console.error('Error while generating questions:', error);
     res.status(500).json({ error: error.message });
   }
 };
