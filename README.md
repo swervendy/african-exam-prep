@@ -1,12 +1,13 @@
 # Quiz Anything
 
-A dynamic quiz application that allows users to generate quizzes on any topic of their choice. Powered by OpenAI's GPT-3.5-turbo model and built with Next.js and MongoDB.
+A quiz application that allows users to generate quizzes and get tutored about any topic, Youtube video, or URL of their choice. Powered by OpenAI's GPT-3.5-turbo model and built with Next.js and MongoDB.
 
 ## Features
 
 - **Dynamic Quiz Generation**: Users can input any topic, and the system will generate a set of trivia questions related to that topic.
 - **Persistent User Sessions**: Utilizes UUIDs to maintain user sessions and track quiz progress.
 - **MongoDB Integration**: Efficiently stores and retrieves quiz questions, user sessions, and topics.
+- **Tutor ChatBot**: Builds conversations based on answer responses from user
 - **Responsive Design**: Adapts to various screen sizes for an optimal user experience.
 
 ## Getting Started
