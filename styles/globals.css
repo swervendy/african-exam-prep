@@ -26,6 +26,12 @@
   animation-delay: 150ms;
 }
 
+.bouncing-loader.horizontal span {
+  display: inline-block;
+  margin-right: 8px; /* Increase the right margin to add more space */
+  background: #ffffff;
+}
+
 :root {
   --foreground-rgb: 0, 0, 0;
   --background-start-rgb: 214, 219, 220;
@@ -43,6 +49,7 @@
 body {
   color: rgb(var(--foreground-rgb));
   background-color: white;
+  font-family: 'Montserrat', sans-serif; /* Set the Montserrat font for the body */
 }
 
 @media (prefers-color-scheme: dark) {

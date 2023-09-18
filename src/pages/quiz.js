@@ -1,13 +1,13 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
 import { shuffleArray } from '@/lib/util';
-import ButtonAnswer from '@/components/ButtonAnswer';
 
 export default function Quiz() {
   const [questions, setQuestions] = useState([]);
   const [gameStatus, setGameStatus] = useState('playing');
   const [score, setScore] = useState(0);
   const [questionIndex, setQuestionIndex] = useState(0);
+  const [isAnswered, setIsAnswered] = useState(false);
   const router = useRouter();
 
   const [sessionID, setSessionID] = useState(null);
@@ -48,6 +48,10 @@ export default function Quiz() {
   const question = questions[questionIndex];
 
   function handleAnswerClick(answer) {
+    if (isAnswered) return;
+
+    setIsAnswered(true);
+
     setUserAnswers(prev => {
       const updatedAnswers = [...prev, { question: question.question, userAnswer: answer }];
   
@@ -56,20 +60,24 @@ export default function Quiz() {
       }
   
       const newQuestionIndex = questionIndex + 1;
-      setQuestionIndex(newQuestionIndex);
   
       if (newQuestionIndex === questions.length) {
         setGameStatus('finished');
-        storeUserAnswers(updatedAnswers);  // Pass the updated answers
+        setTimeout(() => storeUserAnswers(updatedAnswers), 1000);
+      } else {
+        setTimeout(() => setQuestionIndex(newQuestionIndex), 1000);
       }
   
       return updatedAnswers;
     });
   }
-  
+
+  useEffect(() => {
+    setIsAnswered(false);
+  }, [questionIndex]);
+
   async function storeUserAnswers(updatedAnswers) {
     try {
-      // Store the user's answers in local storage
       localStorage.setItem('userAnswers', JSON.stringify(updatedAnswers));
   
       const response = await fetch('/api/storeUserAnswers', {
@@ -85,7 +93,6 @@ export default function Quiz() {
       const data = await response.json();
       console.log('storeUserAnswers response:', data);
   
-      // Store the score and total number of questions in local storage
       localStorage.setItem('score', score);
       localStorage.setItem('totalQuestions', questions.length);
   
@@ -95,18 +102,39 @@ export default function Quiz() {
     }
   }
 
+  function ButtonAnswer({ children, onClick, isSelected }) {
+    return (
+      <button 
+        onClick={onClick}
+        className={`px-12 py-9 mb-2 w-full text-left rounded-lg flex items-center justify-between ${isSelected ? 'bg-white text-black border border-indigo-500 shadow-md' : isAnswered ? 'bg-gray-100 cursor-default' : 'bg-gray-100 hover:border hover:border-indigo-500 cursor-pointer'} font-semibold text-md`}
+        disabled={isAnswered}
+      >
+        <span>{children}</span>
+        {isSelected && (
+          <span className="inline-flex items-center justify-center ml-2">
+            <span className="bg-indigo-500 rounded-full w-5 h-5 flex items-center justify-center">
+              <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+              </svg>
+            </span>
+          </span>
+        )}
+      </button>
+    );
+  }
+
   return (
     <main className="flex min-h-screen flex-col items-center justify-center">
       <div className="z-10 w-full max-w-xl m-auto items-center justify-between px-8 lg:flex">
         {gameStatus === 'playing' && question && (
           <div className="w-full">
-            <h2 className="text-3xl text-center font-bold mb-4">Q: {question.question}</h2>
+            <h2 className="text-3xl text-center font-bold mb-6">Q: {question.question}</h2>
             <h3 className="text-xl text-center font-bold mb-12">Score: {score} / {totalQuestions}</h3>
-            <ul className="grid grid-cols-2 w-full gap-4">
+            <ul className="grid grid-cols-1 w-full gap-4">
               {question.answers.map(answer => {
                 return (
                   <li key={answer}>
-                    <ButtonAnswer onClick={() => handleAnswerClick(answer)}>
+                    <ButtonAnswer onClick={() => handleAnswerClick(answer)} isSelected={userAnswers[userAnswers.length - 1]?.userAnswer === answer}>
                       {answer}
                     </ButtonAnswer>
                   </li>

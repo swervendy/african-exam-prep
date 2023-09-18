@@ -128,30 +128,55 @@ function Index() {
 };
 
 return (
-  <main className="flex min-h-screen flex-col items-center justify-start pt-20">
-    <h1 className="text-4xl font-bold mb-3">Quiz Anything</h1>
-    <p className="text-xl mb-6">Make a quiz about any topic, YouTube video, or URL</p>
+  <main className="flex min-h-screen flex-col items-center justify-start pt-40 px-8 lg:px-40">
+    <h1 className="text-4xl font-bold mb-3 text-center">Quiz Anything</h1>
+    <p className="text-xl mb-6 text-center">Make a quiz about any topic, YouTube video, or URL</p>
     <div className="tabs mb-4">
-      <button 
-        onClick={() => setTab('topic')}
-        className={`px-4 py-2 mr-2 rounded ${tab === 'topic' ? 'bg-blue-500 text-white' : 'bg-gray-200'}`}
-      >
-        Topic
-      </button>
-      <button 
-        onClick={() => setTab('youtube')}
-        className={`px-4 py-2 mr-2 rounded ${tab === 'youtube' ? 'bg-blue-500 text-white' : 'bg-gray-200'}`}
-      >
-        YouTube
-      </button>
-      <button 
-        onClick={() => setTab('url')}
-        className={`px-4 py-2 rounded ${tab === 'url' ? 'bg-blue-500 text-white' : 'bg-gray-200'}`}
-      >
-        URL
-      </button>
+    <div className="tabs mb-4 flex flex-wrap">
+    <button 
+  onClick={() => setTab('topic')}
+  className={`px-4 py-2 mr-4 rounded flex items-center justify-between ${tab === 'topic' ? 'bg-white text-black border border-indigo-500 shadow-md' : 'bg-gray-100 hover:bg-white hover:text-black hover:border hover:border-indigo-500 cursor-pointer'}`}
+    >
+  <span className="font-medium">Topic</span>
+  {tab === 'topic' && (
+    <span className="bg-indigo-500 rounded-full w-5 h-5 flex items-center justify-center ml-2">
+      <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+      </svg>
+    </span>
+  )}
+</button>
+
+<button 
+  onClick={() => setTab('youtube')}
+  className={`px-4 py-2 mr-4 rounded flex items-center justify-between ${tab === 'youtube' ? 'bg-white text-black border border-indigo-500 shadow-md' : 'bg-gray-100 hover:bg-white hover:text-black hover:border hover:border-indigo-500 cursor-pointer'}`}
+>
+  <span className="font-medium">YouTube</span>
+  {tab === 'youtube' && (
+    <span className="bg-indigo-500 rounded-full w-5 h-5 flex items-center justify-center ml-2">
+      <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+      </svg>
+    </span>
+  )}
+</button>
+
+<button 
+  onClick={() => setTab('url')}
+  className={`px-4 py-2 rounded flex items-center justify-between ${tab === 'url' ? 'bg-white text-black border border-indigo-500 shadow-md' : 'bg-gray-100 hover:bg-white hover:text-black hover:border hover:border-indigo-500 cursor-pointer'}`}
+>
+  <span className="font-medium">URL</span>
+  {tab === 'url' && (
+    <span className="bg-indigo-500 rounded-full w-5 h-5 flex items-center justify-center ml-2">
+      <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+      </svg>
+    </span>
+  )}
+</button>
+    </div>
             </div>
-            <div className="z-10 w-full max-w-xl m-auto items-center justify-between px-8 lg:flex">
+            <div className="z-10 w-full max-w-xl m-auto items-center justify-between px-7 lg:flex">
               <form onSubmit={handleSubmit} className="w-full">
                 {tab === 'topic' ? (
                   <input
@@ -159,7 +184,7 @@ return (
                     placeholder="Enter a topic"
                     value={topic}
                     onChange={(e) => setTopic(e.target.value)}
-                    className="w-full p-2 border rounded mb-4"
+                    className="w-full p-2 border-indigo-500 rounded mb-4 thin-border"
                   />
                 ) : tab === 'youtube' ? (
                   <input
@@ -167,7 +192,7 @@ return (
                     placeholder="Enter a YouTube URL"
                     value={youtubeURL}
                     onChange={(e) => setYoutubeURL(e.target.value)}
-                    className="w-full p-2 border rounded mb-4"
+                    className="w-full p-2 border-indigo-500 rounded mb-4 thin-border"
                   />
                 ) : (
                   <input
@@ -175,19 +200,22 @@ return (
                     placeholder="Enter a URL"
                     value={url}
                     onChange={(e) => setUrl(e.target.value)}
-                    className="w-full p-2 border rounded mb-4"
+                    className="w-full p-2 border-indigo-500 rounded mb-4 thin-border"
                   />
                 )}
-                <button type="submit" disabled={isLoading} className="flex justify-center items-center w-full h-full text-lg uppercase font-bold hover:text-slate-600 bg-white dark:bg-slate-500 hover:bg-yellow-300 border-4 border-cyan-300 hover:border-yellow-500 py-4 px-16 rounded">
-                {isLoading ? (
-                    <>
-                      <div className="loader inline-block mr-2"></div>
-                      Building your quiz! This may take a sec...
-                    </>
-                  ) : (
-                    'Start Quiz'
-                  )}
-                </button>
+                <button type="submit" disabled={isLoading} className="flex justify-center items-center w-full h-full text-lg font-bold text-white bg-indigo-500 border-4 border-indigo-500 py-4 px-16 rounded-xl shadow-md">
+  {isLoading ? (
+   <div className="bouncing-loader horizontal">
+      <span className="block w-3 h-3 rounded-full"></span>
+      <span className="block w-3 h-3 rounded-full"></span>
+      <span className="block w-3 h-3 rounded-full"></span>
+      Building your quiz! This may take a sec...
+  </div>
+    
+  ) : (
+    'Start Quiz'
+  )}
+</button>
               </form>
             </div>
           </main>
