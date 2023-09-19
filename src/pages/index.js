@@ -176,7 +176,7 @@ return (
 </button>
     </div>
             </div>
-            <div className="z-10 w-full max-w-xl m-auto items-center justify-between px-7 lg:flex">
+            <div className="z-10 w-full max-w-xl m-auto items-center justify-between px-2 lg:flex">
               <form onSubmit={handleSubmit} className="w-full">
                 {tab === 'topic' ? (
                   <input
