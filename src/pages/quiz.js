@@ -106,7 +106,7 @@ export default function Quiz() {
     return (
       <button 
         onClick={onClick}
-        className={`px-12 py-9 mb-2 w-full text-left rounded-lg flex items-center justify-between ${isSelected ? 'bg-white text-black border border-indigo-500 shadow-md' : isAnswered ? 'bg-gray-100 cursor-default' : 'bg-gray-100 hover:border hover:border-indigo-500 cursor-pointer'} font-semibold text-md`}
+        className={`px-12 py-9 mb-2 w-full text-left rounded-lg flex items-center justify-between ${isSelected ? 'bg-white dark:bg-gray-500 text-black border border-indigo-500 shadow-md' : isAnswered ? 'bg-gray-100 cursor-default' : 'bg-gray-100 hover:border hover:border-indigo-500 cursor-pointer'} font-semibold text-md dark:bg-gray-800 dark:text-white dark:hover:border-indigo-500`}
         disabled={isAnswered}
       >
         <span>{children}</span>

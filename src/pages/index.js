@@ -135,7 +135,7 @@ return (
     <div className="tabs mb-4 flex flex-wrap">
     <button 
   onClick={() => setTab('topic')}
-  className={`px-4 py-2 mr-4 rounded flex items-center justify-between ${tab === 'topic' ? 'bg-white text-black border border-indigo-500 shadow-md' : 'bg-gray-100 hover:bg-white hover:text-black hover:border hover:border-indigo-500 cursor-pointer'}`}
+  className={`px-4 py-2 mr-4 rounded flex items-center justify-between ${tab === 'topic' ? 'bg-white dark:bg-gray-400 text-black dark:text-white border border-indigo-500 shadow-md' : 'bg-gray-100 dark:bg-gray-800 dark:text-gray-300 hover:bg-white dark:hover:bg-gray-800 hover:text-black dark:hover:text-gray-500 hover:border hover:border-indigo-500 cursor-pointer'}`}
     >
   <span className="font-medium">Topic</span>
   {tab === 'topic' && (
@@ -149,7 +149,7 @@ return (
 
 <button 
   onClick={() => setTab('youtube')}
-  className={`px-4 py-2 mr-4 rounded flex items-center justify-between ${tab === 'youtube' ? 'bg-white text-black border border-indigo-500 shadow-md' : 'bg-gray-100 hover:bg-white hover:text-black hover:border hover:border-indigo-500 cursor-pointer'}`}
+  className={`px-4 py-2 mr-4 rounded flex items-center justify-between ${tab === 'youtube' ? 'bg-white dark:bg-gray-400 text-black dark:text-white border border-indigo-500 shadow-md' : 'bg-gray-100 dark:bg-gray-800 dark:text-gray-300 hover:bg-white dark:hover:bg-gray-800 hover:text-black dark:hover:text-gray-500 hover:border hover:border-indigo-500 cursor-pointer'}`}
 >
   <span className="font-medium">YouTube</span>
   {tab === 'youtube' && (
@@ -163,7 +163,7 @@ return (
 
 <button 
   onClick={() => setTab('url')}
-  className={`px-4 py-2 rounded flex items-center justify-between ${tab === 'url' ? 'bg-white text-black border border-indigo-500 shadow-md' : 'bg-gray-100 hover:bg-white hover:text-black hover:border hover:border-indigo-500 cursor-pointer'}`}
+  className={`px-4 py-2 rounded flex items-center justify-between ${tab === 'url' ? 'bg-white dark:bg-gray-400 text-black dark:text-white border border-indigo-500 shadow-md' : 'bg-gray-100 dark:bg-gray-800 dark:text-gray-300 hover:bg-white dark:hover:bg-gray-800 hover:text-black dark:hover:text-gray-500 hover:border hover:border-indigo-500 cursor-pointer'}`}
 >
   <span className="font-medium">URL</span>
   {tab === 'url' && (

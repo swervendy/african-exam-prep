@@ -49,17 +49,17 @@ export default function Review() {
           <div className="flex justify-center space-x-4 mt-2 mb-6">
             <button 
               onClick={tryAgain} 
-              className="px-4 py-2 rounded flex items-center justify-between bg-white text-black border border-indigo-500 shadow-md">
+              className="px-4 py-2 rounded flex items-center justify-between bg-white dark:bg-gray-500 text-black dark:text-white border border-gray-500 shadow-md">
               <span className="font-medium">Try again</span>
             </button>
             <button 
               onClick={() => router.push('/')} 
-              className="px-4 py-2 rounded flex items-center justify-between bg-white text-black border border-indigo-500 shadow-md">
+              className="px-4 py-2 rounded flex items-center justify-between bg-white dark:bg-gray-500 text-black dark:text-white border border-gray-500 shadow-md">
               <span className="font-medium">New quiz</span>
             </button>
           </div>
           {userAnswers && userAnswers.map((item, index) => (
-            <div key={index} className="bg-white shadow-md rounded-lg p-4 mb-6">
+            <div key={index} className="bg-white dark:bg-gray-800 shadow-md rounded-lg p-4 mb-6">
               <h2 className="font-bold text-xl mb-2">Question {index + 1}</h2>
               <p className="mb-2">{item.question}</p>
               <p>Your answer: {item.userAnswer}</p>
