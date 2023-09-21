@@ -27,8 +27,9 @@ export const generateYoutubeTriviaQuestions = async (transcriptArray = []) => {
   let counter = 0;
 
   for (const chunk of chunks) {
+    let completion;
     try {
-      const completion = await openai.chat.completions.create({
+      completion = await openai.chat.completions.create({
         model: "gpt-3.5-turbo-16k",
         messages: [{
           role: "user", 
@@ -41,11 +42,14 @@ export const generateYoutubeTriviaQuestions = async (transcriptArray = []) => {
         }],
       });
 
-      console.log(completion.choices[0].message.content);
+      console.log('OpenAI API response:', completion);
       const chunkQuestions = JSON.parse(completion.choices[0].message.content);
       questions = [...questions, ...chunkQuestions];
     } catch (error) {
       console.error('Error during OpenAI API call:', error);
+      if (completion) {
+        console.error('OpenAI API response:', completion);
+      }
     }
 
     counter++;

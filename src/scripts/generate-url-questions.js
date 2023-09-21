@@ -21,20 +21,30 @@ export const generateUrlTriviaQuestions = async (url) => {
   const $ = cheerio.load(response.data);
   const webpageText = $('p').text();
 
-  const completion = await openai.chat.completions.create({
-    model: "gpt-3.5-turbo-16k",
-    messages: [{
-      role: "user", 
-      content: `
-        generate 10 trivia questions based on this webpage content: ${webpageText}. 
-        include wrong answers
-        format the response as JSON in the shape of: ${JSON.stringify(shape)}
-      `
-    }],
-  });
+  let completion;
+  try {
+    completion = await openai.chat.completions.create({
+      model: "gpt-3.5-turbo-16k",
+      messages: [{
+        role: "user", 
+        content: `
+          generate 10 trivia questions based on this webpage content: ${webpageText}. 
+          include wrong answers
+          format the response as JSON in the shape of: ${JSON.stringify(shape)}
+        `
+      }],
+    });
 
-  const questions = JSON.parse(completion.choices[0].message.content);
-  return questions;
+    const messageContent = completion.choices[0].message.content;
+    const questions = JSON.parse(messageContent);
+    return questions;
+  } catch (error) {
+    console.error('Error parsing OpenAI API response:', error);
+    if (completion) {
+      console.error('OpenAI API response:', completion);
+    }
+    throw error;
+  }
 };
 
 if (require.main === module) {
