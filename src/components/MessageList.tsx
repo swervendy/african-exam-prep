@@ -19,7 +19,7 @@ const MessagesList = () => {
           >
             {!isUser && (
               <img
-                src="https://drive.google.com/uc?export=view&id=1UpWcdDDfBbTYuAGLm9iAbxWZMzFCwv32"
+                src="/img/tutor-avatar.png" 
                 className="w-9 h-9 rounded-full"
                 alt="avatar"
               />

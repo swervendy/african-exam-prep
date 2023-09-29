@@ -2,14 +2,13 @@ import { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
 
 export default function Review() {
+  console.log('Rendering Review component');
   const router = useRouter();
   const [score, setScore] = useState(0);
   const [totalQuestions, setTotalQuestions] = useState(0);
   const [userAnswers, setUserAnswers] = useState([]);
 
   useEffect(() => {
-    const sessionID = router.query.sessionID;
-  
     // Retrieve the score, total number of questions, and user's answers from local storage
     const retrievedScore = localStorage.getItem('score');
     const retrievedTotalQuestions = localStorage.getItem('totalQuestions');
@@ -17,24 +16,7 @@ export default function Review() {
     setScore(retrievedScore);
     setTotalQuestions(retrievedTotalQuestions);
     setUserAnswers(retrievedUserAnswers);
-  
-    async function fetchUserAnswers() {
-      try {
-        const response = await fetch(`/api/getUserAnswers?sessionID=${sessionID}`);
-        const data = await response.json();
-        console.log('getUserAnswers response:', data);
-  
-        // Update the user's answers with the server's response
-        setUserAnswers(data.userAnswers);
-      } catch (error) {
-        console.error('Error fetching user answers:', error);
-      }
-    }
-
-    if (sessionID) {
-      fetchUserAnswers();
-    }
-  }, [router.query.sessionID]);
+  }, []);
 
   function tryAgain() {
     router.push(`/quiz?sessionID=${router.query.sessionID}`);

@@ -1,6 +1,9 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
 import { shuffleArray } from '@/lib/util';
+import Image from 'next/image';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faArrowLeft } from '@fortawesome/free-solid-svg-icons';
 
 export default function Quiz() {
   const [questions, setQuestions] = useState([]);
@@ -9,37 +12,63 @@ export default function Quiz() {
   const [questionIndex, setQuestionIndex] = useState(0);
   const [isAnswered, setIsAnswered] = useState(false);
   const router = useRouter();
-
   const [sessionID, setSessionID] = useState(null);
   const [userAnswers, setUserAnswers] = useState([]);
+
+  const handleBackClick = () => {
+    router.back();
+  };
 
   useEffect(() => {
     const retrievedUUID = localStorage.getItem('userUUID');
     const sessionTimestamp = localStorage.getItem('sessionTimestamp');
     const combinedUUID = `${retrievedUUID}-${sessionTimestamp}`;
+    const selectedSubject = localStorage.getItem('selectedSubject');
     console.log("Retrieved sessionID:", combinedUUID);
     setSessionID(combinedUUID);
 
-    async function fetchQuestions() {
+    const fetchQuestions = async () => {
       try {
-        const response = await fetch(`/api/getQuestions?uuid=${sessionID}`);
+        const encodedSubject = encodeURIComponent(selectedSubject);
+        const questionCount = localStorage.getItem('questionCount');
+        const response = await fetch(`/api/fetchJambQuestions?subject=${encodedSubject}&num=${questionCount}`);
         const data = await response.json();
         console.log("API Response:", data);
-
-        if (Array.isArray(data)) {
-          setQuestions(data.map(q => ({
-            ...q,
-            answers: shuffleArray([q.answer, ...q.wrongAnswers])
-          })));
+    
+        if (Array.isArray(data.data)) {
+          setQuestions(data.data.map(q => {
+            if (q.option && typeof q.option === 'object') {
+              // Convert the options object to an array of answers
+              const answers = Object.values(q.option);
+              // Find the correct answer based on the answer letter
+              const correctAnswer = q.option[q.answer];
+              // Remove the correct answer from the array of wrong answers
+              const wrongAnswers = answers.filter(answer => answer !== correctAnswer);
+              // Remove duplicates from the array of answers
+              const uniqueAnswers = [...new Set([correctAnswer, ...wrongAnswers])];
+              // Return the new question object
+              return {
+                ...q,
+                answer: correctAnswer,
+                wrongAnswers: wrongAnswers,
+                // Mix the correct answer with the unique wrong answers
+                answers: shuffleArray(uniqueAnswers)
+              };
+            } else {
+              console.error('Option field is not an object:', q);
+              return null;
+            }
+          }).filter(q => q !== null)); // Filter out any null questions
         } else {
           console.error('Data is not an array:', data);
         }
       } catch (error) {
         console.error('Error fetching questions:', error);
       }
-    }
-
-    if (sessionID) {
+    };
+    
+    // Call fetchQuestions inside the useEffect hook
+    if (sessionID && selectedSubject) {
       fetchQuestions();
     }
   }, [sessionID]);
@@ -49,9 +78,9 @@ export default function Quiz() {
 
   function handleAnswerClick(answer) {
     if (isAnswered) return;
-
+  
     setIsAnswered(true);
-
+  
     setUserAnswers(prev => {
       const updatedAnswers = [...prev, { question: question.question, userAnswer: answer }];
   
@@ -63,7 +92,7 @@ export default function Quiz() {
   
       if (newQuestionIndex === questions.length) {
         setGameStatus('finished');
-        setTimeout(() => storeUserAnswers(updatedAnswers), 1000);
+        setTimeout(() => storeUserAnswers(updatedAnswers), 1000); // Added setTimeout here
       } else {
         setTimeout(() => setQuestionIndex(newQuestionIndex), 1000);
       }
@@ -76,27 +105,46 @@ export default function Quiz() {
     setIsAnswered(false);
   }, [questionIndex]);
 
+  useEffect(() => {
+    if (gameStatus === 'finished') {
+      storeUserAnswers(userAnswers);
+    }
+  }, [gameStatus]);
+  
+  function handleAnswerClick(answer) {
+    if (isAnswered) return;
+  
+    setIsAnswered(true);
+  
+    setUserAnswers(prev => {
+      const updatedAnswers = [...prev, { question: question.question, userAnswer: answer }];
+  
+      if (answer === question.answer) {
+        setScore(prev => prev + 1);
+      }
+  
+      const newQuestionIndex = questionIndex + 1;
+  
+      if (newQuestionIndex === questions.length) {
+        setGameStatus('finished');
+      } else {
+        setTimeout(() => setQuestionIndex(newQuestionIndex), 1000);
+      }
+  
+      return updatedAnswers;
+    });
+  }
   async function storeUserAnswers(updatedAnswers) {
     try {
       localStorage.setItem('userAnswers', JSON.stringify(updatedAnswers));
-  
-      const response = await fetch('/api/storeUserAnswers', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          sessionID: sessionID,
-          userAnswers: updatedAnswers,
-        }),
-      });
-      const data = await response.json();
-      console.log('storeUserAnswers response:', data);
-  
+      localStorage.setItem('questions', JSON.stringify(questions));
       localStorage.setItem('score', score);
       localStorage.setItem('totalQuestions', questions.length);
   
-      router.push(`/review?sessionID=${sessionID}`);
+      // Add a delay before the redirection
+      setTimeout(() => {
+        router.push(`/review?sessionID=${sessionID}`);
+      }, 1000);
     } catch (error) {
       console.error('Error storing user answers:', error);
     }
@@ -124,16 +172,28 @@ export default function Quiz() {
   }
 
   return (
-    <main className="flex min-h-screen flex-col items-center justify-center">
-      <div className="z-10 w-full max-w-xl m-auto items-center justify-between px-8 lg:flex">
-        {gameStatus === 'playing' && question && (
+    <main className="flex flex-col min-h-screen justify-between">
+      <nav className="w-full flex justify-center items-center py-4 bg-white shadow-md pb-4" style={{height: '70px'}}>
+        <div className="absolute left-0 pl-4">
+          <button 
+            onClick={handleBackClick}
+            className="px-6 py-3 rounded bg-white hover:border hover:border-indigo-500 cursor-pointer font-semibold text-md dark:bg-gray-800 dark:text-white dark:hover:border-indigo-500"
+          >
+            <FontAwesomeIcon icon={faArrowLeft} />
+          </button>
+        </div>
+        <div className="flex justify-center">
+          <Image src="/logo.svg" alt="Logo" width={150} height={150} /> {/* Adjust width and height as needed */}
+        </div>
+      </nav>
+      <div className="z-10 w-full max-w-xl m-auto items-center justify-between px-8 lg:flex mt-8">        {gameStatus === 'playing' && question && (
           <div className="w-full">
-            <h2 className="text-3xl text-center font-bold mb-6">Q: {question.question}</h2>
-            <h3 className="text-xl text-center font-bold mb-12">Score: {score} / {totalQuestions}</h3>
+            <h2 className="text-xl text-center font-bold mb-6">Q{questionIndex + 1}: {question.question}</h2>
+            <h3 className="text-l text-center font-normal mb-12">Score: {score} / {totalQuestions}</h3>
             <ul className="grid grid-cols-1 w-full gap-4">
-              {question.answers.map(answer => {
+              {question.answers.map((answer, index) => {
                 return (
-                  <li key={answer}>
+                  <li key={`${questionIndex}-${index}`}>
                     <ButtonAnswer onClick={() => handleAnswerClick(answer)} isSelected={userAnswers[userAnswers.length - 1]?.userAnswer === answer}>
                       {answer}
                     </ButtonAnswer>
@@ -144,6 +204,7 @@ export default function Quiz() {
           </div>
         )}
       </div>
+      <div className="w-full py-4"></div> {/* This is an empty div to keep space at the bottom */}
     </main>
   );
 }
