@@ -173,7 +173,7 @@ export default function Quiz() {
 
   return (
     <main className="flex flex-col min-h-screen justify-between">
-      <nav className="w-full flex justify-center items-center py-4 bg-white shadow-md pb-4" style={{height: '70px'}}>
+      <nav className="w-full flex justify-center items-center py-4 bg-white shadow-sm pb-4" style={{height: '70px'}}>
         <div className="absolute left-0 pl-4">
           <button 
             onClick={handleBackClick}
