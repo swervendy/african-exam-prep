@@ -26,7 +26,7 @@ export default function Review() {
     <main className="flex min-h-screen flex-col items-center justify-start pt-20">
       <div className="z-10 w-full max-w-xl m-auto items-center justify-between px-8 lg:flex">
         <div className="w-full">
-          <h2 className="text-3xl text-center font-bold mb-6">Here&apos;s how you did!</h2>
+          <h2 className="text-2xl text-center font-bold mb-6">Here&apos;s how you did -- click Discuss with a Tutor to get answer explanations</h2>
           <h3 className="text-xl text-center font-bold mb-4">Score: {score} / {totalQuestions}</h3>
           <div className="flex justify-center space-x-4 mt-2 mb-6">
             <button 
