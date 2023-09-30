@@ -1,4 +1,3 @@
-// src/pages/_app.tsx
 import 'styles/globals.css'
 import 'styles/tailwind.css'
 import React from 'react';
@@ -8,11 +7,13 @@ import { AppProps } from 'next/app'
 
 export default function App({ Component, pageProps }: AppProps): JSX.Element {
   return (
-    <ToastProvider>
-      <ModalProvider>
-        <Component {...pageProps} />
-        <Analytics />
-      </ModalProvider>
-    </ToastProvider>
+    <>
+      <ToastProvider>
+        <ModalProvider>
+          <Component {...pageProps} />
+        </ModalProvider>
+      </ToastProvider>
+      <Analytics />
+    </>
   )
 }
