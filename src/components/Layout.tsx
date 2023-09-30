@@ -1,3 +1,4 @@
+// src/components/Layout.tsx
 import Head from 'next/head'
 import React, { ReactNode } from 'react'
 
@@ -10,8 +11,8 @@ type Props = {
 
 const Layout = ({
   children,
-  title = 'Apideck - Next Starter Kit',
-  description = 'A Next.js starter kit with TypeScript, Tailwind, Jest, Prettier, and Eslint',
+  title = 'JAMB CBT 2023 Practice - Master Your Exam with and AI Tutor and Past Questions',
+  description = 'Get ahead with our JAMB CBT 2023 AI practice platform. Prepare for your exam with our interactive quizzes and AI tutor based on YOUR needs, unlimited. Study offline, track your progress, and ace your JAMB exam.',
   favicon = '/img/logo.png'
 }: Props) => (
   <div className="font-basier-circle">
