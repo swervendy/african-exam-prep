@@ -24,11 +24,11 @@ export function MessagesProvider({ children }: { children: ReactNode }) {
     const initializeChat = () => {
       const systemMessage: OpenAI.Chat.CreateChatCompletionRequestMessage = {
         role: 'system',
-        content: 'You are ChatGPT, a large language model trained by OpenAI, acting as a Nigerian tutor to educate Nigerian students.'
+        content: 'You are a AI tutor backed by a large language model trained by OpenAI. You acting as a Nigerian tutor to educate Nigerian students. Speak in the simplest possible English that you can. Explain answers to people step by step.'
       }
       const welcomeMessage: OpenAI.Chat.CreateChatCompletionRequestMessage = {
         role: 'assistant',
-        content: `You answered "${answer}" to the question "${question}" I'm your tutor, here to help you! How did you arrive at this answer?`
+        content: `You answered "${answer}" to the question "${question}" I'm your tutor, how can I help you?`
       }
       setMessages([systemMessage, welcomeMessage])
     }
