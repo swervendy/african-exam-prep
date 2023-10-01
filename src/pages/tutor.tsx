@@ -4,16 +4,18 @@ import { NextPage } from 'next'
 import { MessagesProvider } from '../utils/useMessages'
 import Layout from '../components/Layout'
 import { useRouter } from 'next/router'
-
+import ErrorBoundary from '../components/ErrorBoundary'
 
 const IndexPage: NextPage = () => {
   return (
     <MessagesProvider>
       <Layout>
-        <MessagesList />
-        <div className="fixed bottom-0 right-0 left-0">
-          <MessageForm />
-        </div>
+        <ErrorBoundary>
+          <MessagesList />
+          <div className="fixed bottom-0 right-0 left-0">
+            <MessageForm />
+          </div>
+        </ErrorBoundary>
       </Layout>
     </MessagesProvider>
   )
