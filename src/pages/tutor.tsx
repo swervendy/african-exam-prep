@@ -1,5 +1,3 @@
-import MessageForm from '../components/MessageForm'
-import MessagesList from '../components/MessageList'
 import { NextPage } from 'next'
 import { MessagesProvider } from '../utils/useMessages'
 import Layout from '../components/Layout'
@@ -11,10 +9,7 @@ const IndexPage: NextPage = () => {
     <MessagesProvider>
       <Layout>
         <ErrorBoundary>
-          <MessagesList />
-          <div className="fixed bottom-0 right-0 left-0">
-            <MessageForm />
-          </div>
+          {/* MessagesList and MessageForm components are already included in Layout, so they are not needed here */}
         </ErrorBoundary>
       </Layout>
     </MessagesProvider>

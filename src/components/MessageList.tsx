@@ -1,8 +1,15 @@
 import { useMessages } from '../utils/useMessages'
-import React from 'react';
+import React, { useEffect, useRef } from 'react';
 
 const MessagesList = () => {
   const { messages, isLoadingAnswer } = useMessages()
+  const messagesEndRef = useRef(null)
+
+  const scrollToBottom = () => {
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" })
+  }
+
+  useEffect(scrollToBottom, [messages]);
 
   return (
     <div className="max-w-3xl mx-auto pt-8 px-4">
@@ -58,6 +65,7 @@ const MessagesList = () => {
           </div>
         </div>
       )}
+      <div ref={messagesEndRef} />
     </div>
   )
 }

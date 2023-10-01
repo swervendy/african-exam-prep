@@ -1,6 +1,7 @@
-// src/components/Layout.tsx
 import Head from 'next/head'
 import React, { ReactNode } from 'react'
+import MessageList from './MessageList'
+import MessageForm from './MessageForm'
 
 type Props = {
   children: ReactNode
@@ -23,7 +24,15 @@ const Layout = ({
       <meta name="viewport" content="initial-scale=1.0, width=device-width" />
       <link rel="icon" href={favicon} />
     </Head>
-    <div className="min-h-screen bg-gray-50">{children}</div>
+    <div className="min-h-screen bg-gray-50 flex flex-col">
+      <div className="overflow-auto">
+        <MessageList />
+      </div>
+      <div className="mt-auto">
+        <MessageForm />
+      </div>
+      {children}
+    </div>
   </div>
 )
 
