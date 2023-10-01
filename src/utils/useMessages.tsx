@@ -58,7 +58,8 @@ export function MessagesProvider({ children }: { children: ReactNode }) {
       // Add the assistant message to the state
       setMessages([...newMessages, reply])
     } catch (error) {
-      // Show error when something goes wrong
+      console.error('Error in addMessage:', error.message)
+      console.error('Stack trace:', error.stack)
       addToast({ title: 'An error occurred', type: 'error' })
     } finally {
       setIsLoadingAnswer(false)
