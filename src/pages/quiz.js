@@ -92,9 +92,11 @@ export default function Quiz() {
   
       if (newQuestionIndex === questions.length) {
         setGameStatus('finished');
-        setTimeout(() => storeUserAnswers(updatedAnswers), 1000); // Added setTimeout here
       } else {
-        setTimeout(() => setQuestionIndex(newQuestionIndex), 1000);
+        setTimeout(() => {
+          setQuestionIndex(newQuestionIndex);
+          setIsAnswered(false); // Reset the selected answer state here
+        }, 1000);
       }
   
       return updatedAnswers;
