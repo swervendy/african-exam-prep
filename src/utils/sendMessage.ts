@@ -1,4 +1,5 @@
 import OpenAI from 'openai'
+import va from '@vercel/analytics' // Add this line
 
 export const sendMessage = async (messages: OpenAI.Chat.CreateChatCompletionRequestMessage[]) => {
   try {
@@ -9,6 +10,8 @@ export const sendMessage = async (messages: OpenAI.Chat.CreateChatCompletionRequ
       },
       body: JSON.stringify({ messages })
     })
+
+    va.track('Message Sent') // Add this line to track the event
 
     return await response.json()
   } catch (error) {
