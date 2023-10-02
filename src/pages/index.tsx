@@ -87,7 +87,7 @@ export default function Index() {
       <div className="flex-grow flex flex-col items-center justify-center">
         {step === 0 ? (
           <>
-            <h1 className="text-md font-style: italic mb-3 text-center mt-8">Practice JAMB questions and learn from an AI tutor FOR FREE</h1>
+            <h1 className="text-md font-style: italic mb-3 text-center mt-6 px-12 sm:px-0">Practice JAMB questions and learn from an AI tutor FOR FREE</h1>
             <h2 className="text-xl mb-3 font-bold text-center">Select a Subject</h2>
             <div className="grid grid-cols-2 gap-4">
               {subjects.map((subject) => (

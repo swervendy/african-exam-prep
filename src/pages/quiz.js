@@ -151,11 +151,25 @@ export default function Quiz() {
   }
 
   function ButtonAnswer({ children, onClick, isSelected }) {
+    const [isTouchDevice, setIsTouchDevice] = useState(false);
+  
+    const handleTouchStart = () => {
+      setIsTouchDevice(true);
+    };
+  
+    useEffect(() => {
+      window.addEventListener('touchstart', handleTouchStart);
+  
+      return () => {
+        window.removeEventListener('touchstart', handleTouchStart);
+      };
+    }, []);
+  
     return (
       <>
         <button 
           onClick={onClick}
-          className={`px-12 py-9 mb-2 w-full text-left rounded-lg flex items-center justify-between ${isSelected ? 'bg-white dark:bg-gray-500 text-black border border-indigo-500 shadow-md' : isAnswered ? 'bg-gray-100 cursor-default' : 'bg-gray-100 cursor-pointer hover:border hover:border-indigo-500'} font-semibold text-md dark:bg-gray-800 dark:text-white`}
+          className={`px-12 py-9 mb-2 w-full text-left rounded-lg flex items-center justify-between ${isSelected ? 'bg-white dark:bg-gray-500 text-black border border-indigo-500 shadow-md' : isAnswered ? 'bg-gray-100 cursor-default' : 'bg-gray-100 cursor-pointer' + (isTouchDevice ? '' : ' hover:border hover:border-indigo-500')} font-semibold text-md dark:bg-gray-800 dark:text-white`}
           disabled={isAnswered}
         >
           <span>{children}</span>
@@ -169,13 +183,6 @@ export default function Quiz() {
             </span>
           )}
         </button>
-        <style jsx>{`
-          @media (pointer: coarse) {
-            .hover\\:border-indigo-500:hover {
-              border-color: inherit;
-            }
-          }
-        `}</style>
       </>
     );
   }
