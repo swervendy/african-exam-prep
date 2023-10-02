@@ -152,22 +152,31 @@ export default function Quiz() {
 
   function ButtonAnswer({ children, onClick, isSelected }) {
     return (
-      <button 
-        onClick={onClick}
-        className={`px-12 py-9 mb-2 w-full text-left rounded-lg flex items-center justify-between ${isSelected ? 'bg-white dark:bg-gray-500 text-black border border-indigo-500 shadow-md' : isAnswered ? 'bg-gray-100 cursor-default' : 'bg-gray-100 hover:border hover:border-indigo-500 cursor-pointer'} font-semibold text-md dark:bg-gray-800 dark:text-white dark:hover:border-indigo-500`}
-        disabled={isAnswered}
-      >
-        <span>{children}</span>
-        {isSelected && (
-          <span className="inline-flex items-center justify-center ml-2">
-            <span className="bg-indigo-500 rounded-full w-5 h-5 flex items-center justify-center">
-              <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-              </svg>
+      <>
+        <button 
+          onClick={onClick}
+          className={`px-12 py-9 mb-2 w-full text-left rounded-lg flex items-center justify-between ${isSelected ? 'bg-white dark:bg-gray-500 text-black border border-indigo-500 shadow-md' : isAnswered ? 'bg-gray-100 cursor-default' : 'bg-gray-100 cursor-pointer hover:border hover:border-indigo-500'} font-semibold text-md dark:bg-gray-800 dark:text-white`}
+          disabled={isAnswered}
+        >
+          <span>{children}</span>
+          {isSelected && (
+            <span className="inline-flex items-center justify-center ml-2">
+              <span className="bg-indigo-500 rounded-full w-5 h-5 flex items-center justify-center">
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                </svg>
+              </span>
             </span>
-          </span>
-        )}
-      </button>
+          )}
+        </button>
+        <style jsx>{`
+          @media (pointer: coarse) {
+            .hover\\:border-indigo-500:hover {
+              border-color: inherit;
+            }
+          }
+        `}</style>
+      </>
     );
   }
 

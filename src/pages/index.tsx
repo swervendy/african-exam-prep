@@ -95,7 +95,7 @@ export default function Index() {
                   key={subject.name} 
                   onClick={() => handleSubjectClick(subject)}
                   disabled={selectedSubject !== null}
-                  className={`px-6 py-4 rounded flex flex-col items-center justify-center border-2 shadow-sm ${subject.name === selectedSubject ? 'bg-white dark:bg-gray-500 text-black border border-indigo-500 shadow-md' : 'bg-white hover:border hover:border-indigo-500 cursor-pointer'} font-semibold text-md dark:bg-gray-800 dark:text-white dark:hover:border-indigo-500`}
+                  className={`px-2 sm:px-6 py-4 rounded flex flex-col items-center justify-center border-2 shadow-sm ${subject.name === selectedSubject ? 'bg-white dark:bg-gray-500 text-black border border-indigo-500 shadow-md' : 'bg-white hover:border hover:border-indigo-500 cursor-pointer'} font-semibold text-md dark:bg-gray-800 dark:text-white dark:hover:border-indigo-500`}
                 >
                   <FontAwesomeIcon icon={subject.icon} color="Mediumslateblue" />
                   <span className="font-medium mt-2">{subject.name}</span>
