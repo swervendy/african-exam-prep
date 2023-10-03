@@ -9,7 +9,7 @@ const MessageForm = () => {
 
   const handleSubmit = async (e?: any) => {
     e?.preventDefault()
-    addMessage(content)
+    addMessage(content, 'user') // 'user' is passed as the role
     setContent('')
   }
 

@@ -23,14 +23,15 @@ export default function Quiz() {
     const retrievedUUID = localStorage.getItem('userUUID');
     const sessionTimestamp = localStorage.getItem('sessionTimestamp');
     const combinedUUID = `${retrievedUUID}-${sessionTimestamp}`;
+    // Retrieve the subject and questionCount from local storage
     const selectedSubject = localStorage.getItem('selectedSubject');
+    const questionCount = localStorage.getItem('questionCount');
     console.log("Retrieved sessionID:", combinedUUID);
     setSessionID(combinedUUID);
-
+  
     const fetchQuestions = async () => {
       try {
         const encodedSubject = encodeURIComponent(selectedSubject);
-        const questionCount = localStorage.getItem('questionCount');
         const response = await fetch(`/api/fetchJambQuestions?subject=${encodedSubject}&num=${questionCount}`);
         const data = await response.json();
         console.log("API Response:", data);

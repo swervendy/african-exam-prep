@@ -6,9 +6,10 @@ import { useRouter } from 'next/router';
 
 interface ContextProps {
   messages: OpenAI.Chat.CreateChatCompletionRequestMessage[]
-  addMessage: (content: string) => Promise<void>
+  addMessage: (content: string, role: "function" | "user" | "system" | "assistant") => Promise<void>
   isLoadingAnswer: boolean
 }
+
 
 const ChatsContext = createContext<Partial<ContextProps>>({})
 
@@ -40,23 +41,34 @@ export function MessagesProvider({ children }: { children: ReactNode }) {
     }
   }, [messages?.length, setMessages, question, answer])
 
-  const addMessage = async (content: string) => {
+  const addMessage = async (content: string, role: "function" | "user" | "system" | "assistant") => {
     setIsLoadingAnswer(true)
     try {
       const newMessage: OpenAI.Chat.CreateChatCompletionRequestMessage = {
-        role: 'user',
+        role,
         content
       }
       const newMessages = [...messages, newMessage]
-
-      // Add the user message to the state so we can see it immediately
+  
+      // Add the message to the state
       setMessages(newMessages)
-
-      const { data } = await sendMessage(newMessages)
-      const reply = data.choices[0].message
-
-      // Add the assistant message to the state
-      setMessages([...newMessages, reply])
+  
+      // Store the message in the database
+      await fetch('/api/storeMessage', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ sessionID: localStorage.getItem('sessionID'), role, content })
+      })
+  
+      if (role === 'user') {
+        const { data } = await sendMessage(newMessages)
+        const reply = data.choices[0].message
+  
+        // Add the assistant message to the state
+        setMessages([...newMessages, reply])
+      }
     } catch (error) {
       console.error('Error in addMessage:', error.message)
       console.error('Stack trace:', error.stack)

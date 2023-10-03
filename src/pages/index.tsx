@@ -49,6 +49,9 @@ export default function Index() {
     setSelectedQuestionCount(count);
     setTimeout(() => {
       setQuestionCount(count);
+      // Store the subject and questionCount in local storage
+      localStorage.setItem('selectedSubject', subject);
+      localStorage.setItem('questionCount', count.toString());
       router.push('/quiz');
     }, 1000); // question select delay
   };
