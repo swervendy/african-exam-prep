@@ -3,6 +3,7 @@ import { useRouter } from 'next/router';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faArrowLeft, faBook, faPlus, faDollarSign, faBalanceScale, faLeaf, faFlask, faGlobe, faBookOpen, faLandmark, faCross, faMountain, faChartLine, faMoon, faFlagUsa, faHistory } from '@fortawesome/free-solid-svg-icons';
 import Image from 'next/image';
+import { v4 as uuidv4 } from 'uuid';
 
 export default function Index() {
   const [subject, setSubject] = useState<string | null>(null);
@@ -54,7 +55,34 @@ export default function Index() {
     setStep(0);
     setSelectedSubject(null); // Reset selected subject
   };
+  
+  useEffect(() => {
+    // Check if a UUID already exists
+    if (!localStorage.getItem('userUUID')) {
+      // Generate a new UUID
+      const uuid = uuidv4();
+      // Store the UUID in local storage
+      localStorage.setItem('userUUID', uuid);
+    }
+  }, []);
 
+  useEffect(() => {
+    // Generate a new session timestamp
+    const sessionTimestamp = Date.now();
+    // Store the session timestamp in local storage
+    localStorage.setItem('sessionTimestamp', sessionTimestamp.toString());
+  }, []);
+
+  useEffect(() => {
+    // Retrieve the UUID and session timestamp from local storage
+    const retrievedUUID = localStorage.getItem('userUUID');
+    const sessionTimestamp = localStorage.getItem('sessionTimestamp');
+    // Combine the UUID and session timestamp to create a session ID
+    const sessionID = `${retrievedUUID}-${sessionTimestamp}`;
+    // Store the session ID in local storage
+    localStorage.setItem('sessionID', sessionID);
+  }, []);
+  
   useEffect(() => {
     if (subject) {
       localStorage.setItem('selectedSubject', subject);
