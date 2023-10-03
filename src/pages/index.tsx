@@ -98,11 +98,12 @@ export default function Index() {
   }, []);  // Empty dependency array to run only once
   
   useEffect(() => {
+    // Only run this effect if a subject or questionCount is selected
     if (subject || questionCount) {
       const retrievedUUID = localStorage.getItem('userUUID');
       const sessionTimestamp = localStorage.getItem('sessionTimestamp');
       const sessionID = localStorage.getItem('sessionID');
-
+  
       fetch('/api/updateSession', {
         method: 'PUT',
         headers: {
@@ -121,6 +122,8 @@ export default function Index() {
       .catch(error => console.error('Error updating session data:', error));
     }
   }, [subject, questionCount]);
+  
+  
 
   return (
     <main className="flex flex-col min-h-screen justify-between">
