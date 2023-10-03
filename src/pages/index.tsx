@@ -4,6 +4,8 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faArrowLeft, faBook, faPlus, faDollarSign, faBalanceScale, faLeaf, faFlask, faGlobe, faBookOpen, faLandmark, faCross, faMountain, faChartLine, faMoon, faFlagUsa, faHistory } from '@fortawesome/free-solid-svg-icons';
 import Image from 'next/image';
 import { v4 as uuidv4 } from 'uuid';
+import { sql } from "@vercel/postgres";
+
 
 export default function Index() {
   const [subject, setSubject] = useState<string | null>(null);
@@ -64,36 +66,61 @@ export default function Index() {
       // Store the UUID in local storage
       localStorage.setItem('userUUID', uuid);
     }
-  }, []);
-
-  useEffect(() => {
+  
     // Generate a new session timestamp
     const sessionTimestamp = Date.now();
     // Store the session timestamp in local storage
     localStorage.setItem('sessionTimestamp', sessionTimestamp.toString());
-  }, []);
-
-  useEffect(() => {
+  
     // Retrieve the UUID and session timestamp from local storage
     const retrievedUUID = localStorage.getItem('userUUID');
-    const sessionTimestamp = localStorage.getItem('sessionTimestamp');
     // Combine the UUID and session timestamp to create a session ID
     const sessionID = `${retrievedUUID}-${sessionTimestamp}`;
     // Store the session ID in local storage
     localStorage.setItem('sessionID', sessionID);
-  }, []);
+  
+    // Send the data to your API route to create a new session in your database
+    fetch('/api/storeSession', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        userUUID: retrievedUUID,
+        sessionTimestamp,
+        sessionID,
+        // Initially, selectedSubject and questionCount might be null
+      }),
+    })
+    .then(response => response.json())
+    .then(data => console.log(data.message))
+    .catch(error => console.error('Error storing session data:', error));
+  }, []);  // Empty dependency array to run only once
   
   useEffect(() => {
-    if (subject) {
-      localStorage.setItem('selectedSubject', subject);
-    }
-  }, [subject]);
+    if (subject || questionCount) {
+      const retrievedUUID = localStorage.getItem('userUUID');
+      const sessionTimestamp = localStorage.getItem('sessionTimestamp');
+      const sessionID = localStorage.getItem('sessionID');
 
-  useEffect(() => {
-    if (questionCount) {
-      localStorage.setItem('questionCount', questionCount.toString());
+      fetch('/api/updateSession', {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          userUUID: retrievedUUID,
+          sessionTimestamp,
+          sessionID,
+          selectedSubject: subject,
+          questionCount
+        }),
+      })
+      .then(response => response.json())
+      .then(data => console.log(data.message))
+      .catch(error => console.error('Error updating session data:', error));
     }
-  }, [questionCount]);
+  }, [subject, questionCount]);
 
   return (
     <main className="flex flex-col min-h-screen justify-between">
