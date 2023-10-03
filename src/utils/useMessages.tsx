@@ -6,7 +6,7 @@ import { useRouter } from 'next/router';
 
 interface ContextProps {
   messages: OpenAI.Chat.CreateChatCompletionRequestMessage[]
-  addMessage: (content: string, role: "function" | "user" | "system" | "assistant") => Promise<void>
+  addMessage: (content: string, role: "function" | "user" | "system" | "assistant", sender: string) => Promise<void>
   isLoadingAnswer: boolean
 }
 
@@ -41,7 +41,7 @@ export function MessagesProvider({ children }: { children: ReactNode }) {
     }
   }, [messages?.length, setMessages, question, answer])
 
-  const addMessage = async (content: string, role: "function" | "user" | "system" | "assistant") => {
+  const addMessage = async (content: string, role: "function" | "user" | "system" | "assistant", sender: string) => {
     setIsLoadingAnswer(true)
     try {
       const newMessage: OpenAI.Chat.CreateChatCompletionRequestMessage = {
@@ -59,15 +59,29 @@ export function MessagesProvider({ children }: { children: ReactNode }) {
         headers: {
           'Content-Type': 'application/json'
         },
-        body: JSON.stringify({ sessionID: localStorage.getItem('sessionID'), role, content })
+        body: JSON.stringify({ sessionID: localStorage.getItem('sessionID'), role, content, sender })
       })
-  
+    
       if (role === 'user') {
         const { data } = await sendMessage(newMessages)
-        const reply = data.choices[0].message
-  
+        const assistantContent = data.choices[0].message.content
+    
+        const assistantMessage: OpenAI.Chat.CreateChatCompletionRequestMessage = {
+          role: 'assistant',
+          content: assistantContent
+        }
+    
+        // Store the assistant message in the database
+        await fetch('/api/storeMessage', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({ sessionID: localStorage.getItem('sessionID'), role: assistantMessage.role, content: assistantMessage.content, sender: 'assistant' })
+        })
+    
         // Add the assistant message to the state
-        setMessages([...newMessages, reply])
+        setMessages([...newMessages, assistantMessage])
       }
     } catch (error) {
       console.error('Error in addMessage:', error.message)
