@@ -4,9 +4,12 @@ import Layout from '../components/Layout'
 import { useRouter } from 'next/router'
 import ErrorBoundary from '../components/ErrorBoundary'
 
-const IndexPage: NextPage = () => {
+const TutorPage: NextPage = () => {
+  const router = useRouter();
+  const { question, answer, correctAnswer } = router.query;
+
   return (
-    <MessagesProvider>
+    <MessagesProvider correctAnswer={correctAnswer as string}>
       <Layout>
         <ErrorBoundary>
           {/* MessagesList and MessageForm components are already included in Layout, so they are not needed here */}
@@ -16,4 +19,4 @@ const IndexPage: NextPage = () => {
   )
 }
 
-export default IndexPage
+export default TutorPage

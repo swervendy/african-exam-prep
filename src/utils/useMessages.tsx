@@ -13,7 +13,7 @@ interface ContextProps {
 
 const ChatsContext = createContext<Partial<ContextProps>>({})
 
-export function MessagesProvider({ children }: { children: ReactNode }) {
+export function MessagesProvider({ children, correctAnswer }: { children: ReactNode, correctAnswer: string }) {
   const { addToast } = useToast()
   const [messages, setMessages] = useState<OpenAI.Chat.CreateChatCompletionRequestMessage[]>([])
   const [isLoadingAnswer, setIsLoadingAnswer] = useState(false)
@@ -25,17 +25,15 @@ export function MessagesProvider({ children }: { children: ReactNode }) {
     const initializeChat = () => {
       const systemMessage: OpenAI.Chat.CreateChatCompletionRequestMessage = {
         role: 'system',
-        content: 'You are a AI tutor backed by a large language model trained by OpenAI. You acting as a Nigerian tutor to educate Nigerian students. Speak in the simplest possible English that you can. Explain answers to people step by step.'
+        content: 'You are a AI tutor backed by a large language model. You acting as a Nigerian tutor to educate Nigerian students. Speak in the simplest possible English that you can. Explain answers to people step by step.'
       }
       const welcomeMessage: OpenAI.Chat.CreateChatCompletionRequestMessage = {
         role: 'assistant',
-        content: `You answered "${answer}" to the question "${question}" I'm your tutor, how can I help you?`
+        content: `This question was: "${question}"<br/><br/>Your answer was: ${answer}<br/><br/><strong class="font-bold">The correct answer was: ${correctAnswer}</strong><br/><br/>I'm your tutor, how can I help you?`
       }
       setMessages([systemMessage, welcomeMessage])
     }
   
-    // When no messages are present and router.query has question and answer, we initialize the chat the system message and the welcome message
-    // We hide the system message from the user in the UI
     if (!messages?.length && question && answer) {
       initializeChat()
     }

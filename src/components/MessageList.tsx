@@ -38,9 +38,8 @@ const MessagesList = () => {
                   ? 'ml-2 bg-indigo-500 dark:bg-indigo-300 text-white dark:text-black'
                   : 'ml-2 bg-gray-200 dark:bg-gray-800 text-gray-700 dark:text-gray-200'
               }`}
-            >
-              {message.content.trim()}
-            </div>
+              dangerouslySetInnerHTML={{ __html: message.content.trim() }}
+            />
             {isUser && (
               <img
                 src="https://www.teamsmart.ai/next-assets/profile-image.png"

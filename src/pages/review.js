@@ -47,7 +47,7 @@ export default function Review() {
     <p>Your answer: {item.userAnswer}</p>
     <p><strong>Correct answer: <strong>{item.correctAnswer}</strong></strong></p>
     <button 
-      onClick={() => router.push(`/tutor?question=${encodeURIComponent(item.question)}&answer=${encodeURIComponent(item.userAnswer)}`)} 
+      onClick={() => router.push(`/tutor?question=${encodeURIComponent(item.question)}&answer=${encodeURIComponent(item.userAnswer)}&correctAnswer=${encodeURIComponent(item.correctAnswer)}`)} 
       className="flex justify-center items-center w-full h-full text-lg font-bold text-white bg-indigo-500 border-4 border-indigo-500 py-4 px-16 rounded-xl shadow-md mt-4">
       Discuss with a Tutor
     </button>
