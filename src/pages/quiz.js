@@ -119,8 +119,11 @@ export default function Quiz() {
   
     setIsAnswered(true);
   
+    // Get the text of the correct answer
+    const correctAnswerText = question.answer;
+  
     setUserAnswers(prev => {
-      const updatedAnswers = [...prev, { question: question.question, userAnswer: answer }];
+      const updatedAnswers = [...prev, { question: question.question, userAnswer: answer, correctAnswer: correctAnswerText }];
   
       if (answer === question.answer) {
         setScore(prev => prev + 1);
@@ -131,7 +134,10 @@ export default function Quiz() {
       if (newQuestionIndex === questions.length) {
         setGameStatus('finished');
       } else {
-        setTimeout(() => setQuestionIndex(newQuestionIndex), 1000);
+        setTimeout(() => {
+          setQuestionIndex(newQuestionIndex);
+          setIsAnswered(false); // Reset the selected answer state here
+        }, 1000);
       }
   
       return updatedAnswers;

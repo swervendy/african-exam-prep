@@ -41,17 +41,18 @@ export default function Review() {
             </button>
           </div>
           {userAnswers && userAnswers.map((item, index) => (
-            <div key={index} className="bg-white dark:bg-gray-800 shadow-md rounded-lg p-4 mb-6">
-              <h2 className="font-bold text-xl mb-2">Question {index + 1}</h2>
-              <p className="mb-2">{item.question}</p>
-              <p>Your answer: {item.userAnswer}</p>
-              <button 
-                onClick={() => router.push(`/tutor?question=${encodeURIComponent(item.question)}&answer=${encodeURIComponent(item.userAnswer)}`)} 
-                className="flex justify-center items-center w-full h-full text-lg font-bold text-white bg-indigo-500 border-4 border-indigo-500 py-4 px-16 rounded-xl shadow-md mt-4">
-                Discuss with a Tutor
-              </button>
-            </div>
-          ))}
+  <div key={index} className="bg-white dark:bg-gray-800 shadow-md rounded-lg p-4 mb-6">
+    <h2 className="font-bold text-xl mb-2">Question {index + 1}</h2>
+    <p className="mb-2">{item.question}</p>
+    <p>Your answer: {item.userAnswer}</p>
+    <p><strong>Correct answer: <strong>{item.correctAnswer}</strong></strong></p>
+    <button 
+      onClick={() => router.push(`/tutor?question=${encodeURIComponent(item.question)}&answer=${encodeURIComponent(item.userAnswer)}`)} 
+      className="flex justify-center items-center w-full h-full text-lg font-bold text-white bg-indigo-500 border-4 border-indigo-500 py-4 px-16 rounded-xl shadow-md mt-4">
+      Discuss with a Tutor
+    </button>
+  </div>
+))}
         </div>
       </div>
     </main>
