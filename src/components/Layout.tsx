@@ -42,10 +42,10 @@ const Layout = ({
           <MessageList />
         </div>
         <div className="mt-auto w-full flex flex-col items-center">
-          <div className="w-full flex justify-center pb-4">
+          <div className="w-full flex justify-center pb-2">
             <PromptButtons onPromptClick={handlePromptClick} />
           </div>
-          <div className="w-full">
+          <div className="w-full pb-20 sm:pb-0 md:pb-0 lg:pb-0 xl:pb-0 2xl:pb-0">
             <MessageForm handlePromptClick={handlePromptClick} />
           </div>
         </div>
