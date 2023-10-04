@@ -45,7 +45,7 @@ const Layout = ({
           <div className="w-full flex justify-center pb-2">
             <PromptButtons onPromptClick={handlePromptClick} />
           </div>
-          <div className="w-full pb-20 sm:pb-0 md:pb-0 lg:pb-0 xl:pb-0 2xl:pb-0">
+          <div className="w-full pb-auto">
             <MessageForm handlePromptClick={handlePromptClick} />
           </div>
         </div>
