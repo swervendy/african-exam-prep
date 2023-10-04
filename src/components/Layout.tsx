@@ -2,6 +2,8 @@ import Head from 'next/head'
 import React, { ReactNode } from 'react'
 import MessageList from './MessageList'
 import MessageForm from './MessageForm'
+import PromptButtons from './PromptButtons'
+import { useMessages } from '../utils/useMessages'
 
 type Props = {
   children: ReactNode
@@ -15,25 +17,42 @@ const Layout = ({
   title = 'JAMB CBT 2023 Practice - Master Your Exam with and AI Tutor and Past Questions',
   description = 'Get ahead with our JAMB CBT 2023 AI practice platform. Prepare for your exam with our interactive quizzes and AI tutor based on YOUR needs, unlimited. Study offline, track your progress, and ace your JAMB exam.',
   favicon = '/img/logo.svg'
-}: Props) => (
-  <div className="font-basier-circle">
-    <Head>
-      <title>{title}</title>
-      <meta name="description" content={description}></meta>
-      <meta charSet="utf-8" />
-      <meta name="viewport" content="initial-scale=1.0, width=device-width" />
-      <link rel="icon" href={favicon} />
-    </Head>
-    <div className="min-h-screen bg-gray-50 flex flex-col">
-      <div className="overflow-auto">
-        <MessageList />
-      </div>
-      <div className="mt-auto">
-        <MessageForm />
+}: Props) => {
+  const { addMessage } = useMessages();
+
+  const handlePromptClick = (prompt: string) => {
+    if (prompt === 'Step-by-Step Explanation') {
+      addMessage('Please provide a step-by-step explanation', 'user', 'user');
+    } else if (prompt === 'Just the Answer') {
+      addMessage('Please just provide the answer', 'user', 'user');
+    }
+  };
+
+  return (
+    <div className="font-basier-circle">
+       <Head>
+        <title>{title}</title>
+        <meta name="description" content={description}></meta>
+        <meta charSet="utf-8" />
+        <meta name="viewport" content="initial-scale=1.0, width=device-width" />
+        <link rel="icon" href={favicon} />
+      </Head>
+      <div className="min-h-screen bg-gray-50 flex flex-col">
+        <div className="overflow-auto">
+          <MessageList />
+        </div>
+        <div className="mt-auto w-full flex flex-col items-center">
+          <div className="w-full flex justify-center pb-4">
+            <PromptButtons onPromptClick={handlePromptClick} />
+          </div>
+          <div className="w-full">
+            <MessageForm handlePromptClick={handlePromptClick} />
+          </div>
+        </div>
       </div>
       {children}
     </div>
-  </div>
-)
+  )
+}
 
 export default Layout

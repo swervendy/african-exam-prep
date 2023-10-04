@@ -1,11 +1,14 @@
-import { Button, TextArea } from '@apideck/components'
+import { Button } from '@apideck/components'
 import { useState } from 'react'
 import { useMessages } from '../utils/useMessages'
 import React from 'react';
 import TextareaAutosize from 'react-textarea-autosize';
 
+type Props = {
+  handlePromptClick: (prompt: string) => void;
+};
 
-const MessageForm = () => {
+const MessageForm: React.FC<Props> = ({ handlePromptClick }) => {
   const [content, setContent] = useState('')
   const { addMessage } = useMessages()
 
@@ -48,4 +51,4 @@ const MessageForm = () => {
   )
 }
 
-export default MessageForm;
+export default MessageForm
