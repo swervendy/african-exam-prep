@@ -8,8 +8,8 @@ interface ContextProps {
   messages: OpenAI.Chat.CreateChatCompletionRequestMessage[]
   addMessage: (content: string, role: "function" | "user" | "system" | "assistant", sender: string) => Promise<void>
   isLoadingAnswer: boolean
-}
-
+  mode: string
+  setMode: React.Dispatch<React.SetStateAction<string>>}
 
 const ChatsContext = createContext<Partial<ContextProps>>({})
 
@@ -20,7 +20,12 @@ export function MessagesProvider({ children, correctAnswer }: { children: ReactN
   const router = useRouter();
   const { question, answer } = router.query;
   const [message, setMessage] = useState('');
+  const [mode, setMode] = useState('normal');
 
+  useEffect(() => {
+    console.log('Current mode:', mode);
+  }, [mode]);
+  
   useEffect(() => {
     const initializeChat = () => {
       const systemMessage: OpenAI.Chat.CreateChatCompletionRequestMessage = {
@@ -61,7 +66,22 @@ export function MessagesProvider({ children, correctAnswer }: { children: ReactN
       })
     
       if (role === 'user') {
-        const { data } = await sendMessage(newMessages)
+        // Modify the message sent to OpenAI based on the current mode
+        let openAiContent = content;
+        if (mode === 'step-by-step') {
+          openAiContent = JSON.stringify({
+            "instruction": {
+              "text": "Please provide a step-by-step explanation."
+            },
+            "documents": [
+              {
+                "text": content
+              }
+            ]
+          });
+        }
+  
+        const { data } = await sendMessage([...newMessages, { role, content: openAiContent }])
         const assistantContent = data.choices[0].message.content
     
         const assistantMessage: OpenAI.Chat.CreateChatCompletionRequestMessage = {
@@ -91,7 +111,7 @@ export function MessagesProvider({ children, correctAnswer }: { children: ReactN
   }
 
   return (
-    <ChatsContext.Provider value={{ messages, addMessage, isLoadingAnswer }}>
+    <ChatsContext.Provider value={{ messages, addMessage, isLoadingAnswer, mode, setMode }}>
       {children}
     </ChatsContext.Provider>
   )

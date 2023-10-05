@@ -1,5 +1,5 @@
 import Head from 'next/head'
-import React, { ReactNode } from 'react'
+import React, { useEffect, ReactNode } from 'react';
 import MessageList from './MessageList'
 import MessageForm from './MessageForm'
 import PromptButtons from './PromptButtons'
@@ -18,13 +18,13 @@ const Layout = ({
   description = 'Get ahead with our JAMB CBT 2023 AI practice platform. Prepare for your exam with our interactive quizzes and AI tutor based on YOUR needs, unlimited. Study offline, track your progress, and ace your JAMB exam.',
   favicon = '/img/logo.svg'
 }: Props) => {
-  const { addMessage } = useMessages();
+  
+  const { addMessage, mode, setMode } = useMessages();
 
   const handlePromptClick = (prompt: string) => {
-    if (prompt === 'Step-by-Step Explanation') {
+    if (prompt === 'Step-by-step explanation') {
+      setMode('step-by-step');
       addMessage('Please provide a step-by-step explanation', 'user', 'user');
-    } else if (prompt === 'Just the Answer') {
-      addMessage('Please just provide the answer', 'user', 'user');
     }
   };
 
@@ -43,7 +43,7 @@ const Layout = ({
         </div>
         <div className="mt-auto w-full flex flex-col items-center">
           <div className="w-full flex justify-center pb-2">
-            <PromptButtons onPromptClick={handlePromptClick} />
+            <PromptButtons onPromptClick={handlePromptClick} mode={mode} />
           </div>
           <div className="w-full pb-auto">
             <MessageForm handlePromptClick={handlePromptClick} />
