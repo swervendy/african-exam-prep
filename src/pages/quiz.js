@@ -194,8 +194,7 @@ export default function Quiz() {
           </button>
         </div>
         <div className="flex justify-center">
-          <Image src="/logo.svg" alt="Logo" width={150} height={150} /> {/* Adjust width and height as needed */}
-        </div>
+         <Image src="/logo.svg" alt="Logo" width={150} height={150} priority />        </div>
       </nav>
       <div className="z-10 w-full max-w-xl m-auto items-center justify-between px-8 lg:flex mt-8">        {gameStatus === 'playing' && question && (
           <div className="w-full">
