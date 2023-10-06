@@ -69,6 +69,9 @@ export function MessagesProvider({ children, correctAnswer }: { children: ReactN
         // Modify the message sent to OpenAI based on the current mode
         let openAiContent = content;
         if (mode === 'step-by-step') {
+          // Get the content of the welcome message
+          const welcomeMessageContent = messages.find(message => message.role === 'assistant')?.content;
+      
           openAiContent = JSON.stringify({
             "instruction": {
               "text": "Please provide a step-by-step explanation."
@@ -77,10 +80,11 @@ export function MessagesProvider({ children, correctAnswer }: { children: ReactN
               {
                 "text": content
               }
-            ]
+            ],
+            "context": welcomeMessageContent // Pass the context from the welcome message
           });
         }
-  
+        
         const { data } = await sendMessage([...newMessages, { role, content: openAiContent }])
         const assistantContent = data.choices[0].message.content
     

@@ -7,7 +7,7 @@ export default async function createMessage(req: NextApiRequest, res: NextApiRes
 
   const body = JSON.stringify({
     messages,
-    model: 'gpt-4',
+    model: 'gpt-3.5-turbo',
     stream: false
   })
 
