@@ -74,7 +74,7 @@ export function MessagesProvider({ children, correctAnswer }: { children: ReactN
   }, [mode]);
   
   useEffect(() => {
-    const initializeChat = () => {
+    const initializeChat = async () => {
       const systemMessage: OpenAI.Chat.CreateChatCompletionRequestMessage = {
         role: 'system',
         content: 'You are a AI tutor backed by a large language model. You acting as a Nigerian tutor to educate Nigerian students. Speak in the simplest possible English that you can. Explain answers to people step by step.'
@@ -84,13 +84,22 @@ export function MessagesProvider({ children, correctAnswer }: { children: ReactN
         content: `This question was: "${question}"<br/><br/>Your answer was: ${answer}<br/><br/><strong class="font-bold">The correct answer was: ${correctAnswer}</strong><br/><br/>I'm your tutor, how can I help you?`
       }
       setMessages([systemMessage, welcomeMessage])
+  
+      // Store the welcome message in the database
+      await fetch('/api/storeMessage', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ sessionID: localStorage.getItem('sessionID'), role: welcomeMessage.role, content: welcomeMessage.content, sender: 'assistant' })
+      })
     }
   
     if (!messages?.length && question && answer) {
       initializeChat()
     }
   }, [messages?.length, setMessages, question, answer])
-
+  
   const addMessage = async (content: string, role: "function" | "user" | "system" | "assistant", sender: string) => {
     setIsLoadingAnswer(true)
     try {
@@ -148,7 +157,6 @@ export function MessagesProvider({ children, correctAnswer }: { children: ReactN
       setIsLoadingAnswer(false)
     }
   }
-  
   return (
     <ChatsContext.Provider value={{ messages, addMessage, isLoadingAnswer, mode, setMode }}>
       {children}
