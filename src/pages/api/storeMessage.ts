@@ -1,25 +1,27 @@
-import { sql } from "@vercel/postgres";
+import { NextApiRequest, NextApiResponse } from 'next';
+import dbConnect from '../../utils/dbConnect';
 
-export default async function storeMessage(req, res) {
+export default async function storeMessage(req: NextApiRequest, res: NextApiResponse) {
+  const { db, client } = await dbConnect();
+
   if (req.method === 'POST') {
     const { sessionID, role, content, sender } = req.body;
 
     try {
-      // Convert the timestamp to seconds, then to a Date, and then to an ISO string
-      const timestampInSeconds = Date.now() / 1000;
-      const date = new Date(timestampInSeconds * 1000);
-      const isoString = date.toISOString();
+      const result = await db.collection('messages').insertOne({
+        session_id: sessionID,
+        role,
+        content,
+        timestamp: new Date(),
+        sender,
+      });
 
-      await sql`
-        INSERT INTO messages 
-        (session_id, role, content, timestamp, sender) 
-        VALUES 
-        (${sessionID}, ${role}, ${content}, ${isoString}, ${sender})
-        `;
       res.status(200).json({ message: 'Message stored successfully!' });
     } catch (error) {
       console.error('Error storing message:', error);
       res.status(500).json({ message: 'Internal Server Error' });
+    } finally {
+      client.close();
     }
   } else {
     res.status(405).json({ message: 'Method Not Allowed' });

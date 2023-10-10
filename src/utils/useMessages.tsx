@@ -111,31 +111,23 @@ export function MessagesProvider({ children, correctAnswer }: { children: ReactN
         },
         body: JSON.stringify({ sessionID: localStorage.getItem('sessionID'), role, content, sender })
       })
-    
+  
       if (role === 'user') {
         // Modify the message sent to OpenAI based on the current mode
         let openAiContent = content;
         if (mode === 'step-by-step') {
-          openAiContent = `Given the following answer explanation you have given to a student: ${content}
-
-
-
-Please provide a structured explanation to the student in the exact format:
-${sampleExplanation}`;
-
+          openAiContent = `Given the following answer explanation you have given to a student: ${content}\n\nPlease provide a structured explanation to the student in the exact format:\n${sampleExplanation}`;
           console.log("Sending the following content to OpenAI:", openAiContent); // Log the message sent to OpenAI
         }
-        
-        const { data } = await sendMessage([...newMessages, { role, content: openAiContent }])
+  
+        const { data } = await sendMessage([{ role, content: openAiContent }])
         const assistantContent = data.choices[0].message.content
-    
-        console.log("Received the following content from OpenAI:", assistantContent); // Log the message received from OpenAI
-    
+  
         const assistantMessage: OpenAI.Chat.CreateChatCompletionRequestMessage = {
           role: 'assistant',
           content: assistantContent
         }
-    
+  
         // Store the assistant message in the database
         await fetch('/api/storeMessage', {
           method: 'POST',
@@ -144,7 +136,7 @@ ${sampleExplanation}`;
           },
           body: JSON.stringify({ sessionID: localStorage.getItem('sessionID'), role: assistantMessage.role, content: assistantMessage.content, sender: 'assistant' })
         })
-    
+  
         // Add the assistant message to the state
         setMessages([...newMessages, assistantMessage])
       }
@@ -156,7 +148,7 @@ ${sampleExplanation}`;
       setIsLoadingAnswer(false)
     }
   }
-
+  
   return (
     <ChatsContext.Provider value={{ messages, addMessage, isLoadingAnswer, mode, setMode }}>
       {children}
