@@ -24,7 +24,10 @@ const Layout = ({
   const handlePromptClick = (prompt: string) => {
     if (prompt === 'Step-by-step explanation') {
       setMode('step-by-step');
-      addMessage('Please provide a step-by-step explanation', 'user', 'user');
+      localStorage.setItem('mode', 'step-by-step');
+      // Pass 'step-by-step' as the overrideMode
+      addMessage('Please provide a step-by-step explanation', 'user', 'user', 'step-by-step');
+      console.log('Step-by-step button clicked, new mode:', mode);
     }
   };
 
