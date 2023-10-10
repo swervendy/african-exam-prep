@@ -99,7 +99,7 @@ export function MessagesProvider({ children, correctAnswer }: { children: ReactN
       initializeChat()
     }
   }, [messages?.length, setMessages, question, answer])
-  
+
   const addMessage = async (content: string, role: "function" | "user" | "system" | "assistant", sender: string) => {
     setIsLoadingAnswer(true)
     try {
@@ -129,7 +129,7 @@ export function MessagesProvider({ children, correctAnswer }: { children: ReactN
           console.log("Sending the following content to OpenAI:", openAiContent); // Log the message sent to OpenAI
         }
   
-        const { data } = await sendMessage([{ role, content: openAiContent }])
+        const { data } = await sendMessage(newMessages.map(message => ({ role: message.role, content: message.content })))
         const assistantContent = data.choices[0].message.content
   
         const assistantMessage: OpenAI.Chat.CreateChatCompletionRequestMessage = {
