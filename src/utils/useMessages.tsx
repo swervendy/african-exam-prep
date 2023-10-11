@@ -30,15 +30,6 @@ export function MessagesProvider({ children, correctAnswer }: { children: ReactN
         content: `This question was: "${question}"<br/><br/>Your answer was: ${answer}<br/><br/><strong class="font-bold">The correct answer was: ${correctAnswer}</strong><br/><br/>I'm your tutor, how can I help you?`
       }
       setMessages([systemMessage, welcomeMessage])
-  
-      // Store the welcome message in the database
-      await fetch('/api/storeMessage', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({ sessionID: localStorage.getItem('sessionID'), role: welcomeMessage.role, content: welcomeMessage.content, sender: 'assistant' })
-      })
     }
   
     if (!messages?.length && question && answer) {
@@ -58,15 +49,6 @@ export function MessagesProvider({ children, correctAnswer }: { children: ReactN
       // Add the message to the state
       setMessages(newMessages)
 
-      // Store the message in the database
-      await fetch('/api/storeMessage', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({ sessionID: localStorage.getItem('sessionID'), role, content, sender })
-      })
-
       if (role === 'user') {
         const { data } = await sendMessage(newMessages.map(message => ({ role: message.role, content: message.content })))
         const assistantContent = data.choices[0].message.content
@@ -75,15 +57,6 @@ export function MessagesProvider({ children, correctAnswer }: { children: ReactN
           role: 'assistant',
           content: assistantContent
         }
-
-        // Store the assistant message in the database
-        await fetch('/api/storeMessage', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify({ sessionID: localStorage.getItem('sessionID'), role: assistantMessage.role, content: assistantMessage.content, sender: 'assistant' })
-        })
 
         // Add the assistant message to the state
         setMessages([...newMessages, assistantMessage])

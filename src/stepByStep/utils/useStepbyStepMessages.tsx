@@ -35,7 +35,7 @@ export function MessagesProvider({ children, correctAnswer }: { children: ReactN
       setMessages([systemMessage, welcomeMessage])
   
       // Store the welcome message in the database
-      await fetch('/api/storeMessage', {
+      await fetch('/api/storeWelcomeMessage', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
