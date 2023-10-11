@@ -45,23 +45,41 @@ export function MessagesProvider({ children, correctAnswer }: { children: ReactN
         content
       }
       const newMessages = [...messages, newMessage]
-
+  
       // Add the message to the state
       setMessages(newMessages)
-
+  
+      // Store the message in the database
+      await fetch('/api/storeConversations', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ sessionID: localStorage.getItem('sessionID'), role, content, sender })
+      })
+  
       if (role === 'user') {
         const { data } = await sendMessage(newMessages.map(message => ({ role: message.role, content: message.content })))
         const assistantContent = data.choices[0].message.content
-
+  
         const assistantMessage: OpenAI.Chat.CreateChatCompletionRequestMessage = {
           role: 'assistant',
           content: assistantContent
         }
-
+  
         // Add the assistant message to the state
         setMessages([...newMessages, assistantMessage])
+  
+        // Store the assistant message in the database
+        await fetch('/api/storeConversations', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({ sessionID: localStorage.getItem('sessionID'), role: 'assistant', content: assistantContent, sender: 'assistant' })
+        })
       }
-
+  
     } catch (error) {
       console.error('Error in addMessage:', error.message)
       console.error('Stack trace:', error.stack)
