@@ -4,11 +4,7 @@ import { useMessages } from '../utils/useMessages'
 import React from 'react';
 import TextareaAutosize from 'react-textarea-autosize';
 
-type Props = {
-  handlePromptClick: (prompt: string) => void;
-};
-
-const MessageForm: React.FC<Props> = ({ handlePromptClick }) => {
+const MessageForm: React.FC = () => {
   const [content, setContent] = useState('')
   const { addMessage } = useMessages()
 

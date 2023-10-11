@@ -2,7 +2,6 @@ import Head from 'next/head'
 import React, { useEffect, ReactNode } from 'react';
 import MessageList from './MessageList'
 import MessageForm from './MessageForm'
-import PromptButtons from './PromptButtons'
 import { useMessages } from '../utils/useMessages'
 
 type Props = {
@@ -19,18 +18,6 @@ const Layout = ({
   favicon = '/img/logo.svg'
 }: Props) => {
   
-  const { addMessage, mode, setMode } = useMessages();
-
-  const handlePromptClick = (prompt: string) => {
-    if (prompt === 'Step-by-step explanation') {
-      setMode('step-by-step');
-      localStorage.setItem('mode', 'step-by-step');
-      // Pass 'step-by-step' as the overrideMode
-      addMessage('Please provide a step-by-step explanation', 'user', 'user', 'step-by-step');
-      console.log('Step-by-step button clicked, new mode:', mode);
-    }
-  };
-
   return (
     <div className="font-basier-circle">
        <Head>
@@ -45,11 +32,8 @@ const Layout = ({
           <MessageList />
         </div>
         <div className="mt-auto w-full flex flex-col items-center">
-          <div className="w-full flex justify-center pb-2">
-            <PromptButtons onPromptClick={handlePromptClick} mode={mode} />
-          </div>
           <div className="w-full pb-auto">
-            <MessageForm handlePromptClick={handlePromptClick} />
+            <MessageForm />
           </div>
         </div>
       </div>
