@@ -8,6 +8,8 @@ interface ContextProps {
   messages: OpenAI.Chat.CreateChatCompletionRequestMessage[]
   addMessage: (content: string, role: "function" | "user" | "system" | "assistant", sender: string) => Promise<void>
   isLoadingAnswer: boolean
+  remainingMessages: string[]
+  setRemainingMessages: React.Dispatch<React.SetStateAction<string[]>>
 }
 
 const ChatsContext = createContext<Partial<ContextProps>>({})
@@ -94,9 +96,9 @@ export function MessagesProvider({ children, correctAnswer }: { children: ReactN
       setIsLoadingAnswer(false)
     }
   }
-  
+
   return (
-    <ChatsContext.Provider value={{ messages, addMessage, isLoadingAnswer }}>
+    <ChatsContext.Provider value={{ messages, addMessage, isLoadingAnswer, remainingMessages, setRemainingMessages }}>
       {children}
     </ChatsContext.Provider>
   )
