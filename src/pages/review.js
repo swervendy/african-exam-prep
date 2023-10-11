@@ -22,7 +22,7 @@ export default function Review() {
   }
 
   function handleStepByStepExplanation(question, userAnswer, correctAnswer) {
-    router.push(`/tutor?mode=step-by-step&question=${encodeURIComponent(question)}&answer=${encodeURIComponent(userAnswer)}&correctAnswer=${encodeURIComponent(correctAnswer)}`);
+    router.push(`/stepByStepTutor?mode=step-by-step&question=${encodeURIComponent(question)}&answer=${encodeURIComponent(userAnswer)}&correctAnswer=${encodeURIComponent(correctAnswer)}`);
   }
 
   function handleChatWithTutor(question, userAnswer, correctAnswer) {
