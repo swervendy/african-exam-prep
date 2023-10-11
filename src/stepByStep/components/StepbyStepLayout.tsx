@@ -1,8 +1,8 @@
 import Head from 'next/head'
 import React, { useEffect, ReactNode } from 'react';
-import MessageList from './MessageList'
-import MessageForm from './MessageForm'
-import { useMessages } from '../utils/useMessages'
+import MessageList from './StepbyStepMessageList'
+import MessageForm from './StepbyStepMessageForm'
+import { useMessages } from '../utils/useStepbyStepMessages'
 
 type Props = {
   children: ReactNode
