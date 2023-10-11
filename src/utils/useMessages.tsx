@@ -30,12 +30,21 @@ export function MessagesProvider({ children, correctAnswer }: { children: ReactN
         content: `This question was: "${question}"<br/><br/>Your answer was: ${answer}<br/><br/><strong class="font-bold">The correct answer was: ${correctAnswer}</strong><br/><br/>I'm your tutor, how can I help you?`
       }
       setMessages([systemMessage, welcomeMessage])
+
+      // Store the welcome message in the database
+      await fetch('/api/storeConversations', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ sessionID: localStorage.getItem('sessionID'), role: welcomeMessage.role, content: welcomeMessage.content, sender: 'assistant' })
+      })
     }
-  
+
     if (!messages?.length && question && answer) {
       initializeChat()
     }
-  }, [messages?.length, setMessages, question, answer])
+  }, [messages?.length, question, answer])
 
   const addMessage = async (content: string, role: "function" | "user" | "system" | "assistant", sender: string) => {
     setIsLoadingAnswer(true)
@@ -45,10 +54,10 @@ export function MessagesProvider({ children, correctAnswer }: { children: ReactN
         content
       }
       const newMessages = [...messages, newMessage]
-  
+
       // Add the message to the state
       setMessages(newMessages)
-  
+
       // Store the message in the database
       await fetch('/api/storeConversations', {
         method: 'POST',
@@ -57,19 +66,19 @@ export function MessagesProvider({ children, correctAnswer }: { children: ReactN
         },
         body: JSON.stringify({ sessionID: localStorage.getItem('sessionID'), role, content, sender })
       })
-  
+
       if (role === 'user') {
         const { data } = await sendMessage(newMessages.map(message => ({ role: message.role, content: message.content })))
         const assistantContent = data.choices[0].message.content
-  
+
         const assistantMessage: OpenAI.Chat.CreateChatCompletionRequestMessage = {
           role: 'assistant',
           content: assistantContent
         }
-  
+
         // Add the assistant message to the state
         setMessages([...newMessages, assistantMessage])
-  
+
         // Store the assistant message in the database
         await fetch('/api/storeConversations', {
           method: 'POST',
@@ -79,7 +88,7 @@ export function MessagesProvider({ children, correctAnswer }: { children: ReactN
           body: JSON.stringify({ sessionID: localStorage.getItem('sessionID'), role: 'assistant', content: assistantContent, sender: 'assistant' })
         })
       }
-  
+
     } catch (error) {
       console.error('Error in addMessage:', error.message)
       console.error('Stack trace:', error.stack)
@@ -88,6 +97,7 @@ export function MessagesProvider({ children, correctAnswer }: { children: ReactN
       setIsLoadingAnswer(false)
     }
   }
+
   return (
     <ChatsContext.Provider value={{ messages, addMessage, isLoadingAnswer }}>
       {children}
