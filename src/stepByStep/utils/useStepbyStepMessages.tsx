@@ -30,7 +30,7 @@ export function MessagesProvider({ children, correctAnswer }: { children: ReactN
       }
       const welcomeMessage: OpenAI.Chat.CreateChatCompletionRequestMessage = {
         role: 'assistant',
-        content: `This question was: "${question}"<br/><br/>Your answer was: ${answer}<br/><br/><strong class="font-bold">The correct answer was: ${correctAnswer}</strong><br/><br/>Click START EXPLANATION to begin.`
+        content: `This question was: "${question}"<br/><br/>Your answer was: ${answer}<br/><br/><strong class="font-bold">The correct answer was: ${correctAnswer}</strong><br/><br/>Click START EXPLANATION to have the problem explained!`
       }
       setMessages([systemMessage, welcomeMessage])
   

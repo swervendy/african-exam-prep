@@ -24,14 +24,17 @@ const MessageForm: React.FC = () => {
       setExplanationStarted(true);
     }
   }
-
-  const buttonText = explanationStarted === 'final' ? 'Get another explanation' : explanationStarted ? 'Next step' : 'Start explanation';
+  
+  const buttonText = explanationStarted === 'final' ? 'Get alternate explanation' : explanationStarted ? 'Next step' : 'Start explanation';
+  const buttonClass = explanationStarted === 'final' ? 
+  "inline-flex items-center justify-center border border-indigo-500 leading-4 font-medium rounded-md transition duration-300 ease-in-out whitespace-nowrap bg-white text-indigo-500 shadow hover:shadow-md active:bg-indigo-600 hover:bg-indigo-700 focus:outline-none px-6 py-3 text-lg" : 
+  "inline-flex items-center justify-center border border-transparent leading-4 font-medium rounded-md transition duration-300 ease-in-out whitespace-nowrap bg-indigo-500 text-white shadow hover:shadow-md active:bg-indigo-600 hover:bg-indigo-700 focus:outline-none px-6 py-3 text-lg";
 
   return (
     <div className="flex justify-center items-center h-screen pb-">
-      <Button className="inline-flex items-center justify-center border border-transparent leading-4 font-medium rounded transition duration-300 ease-in-out whitespace-nowrap bg-indigo-500 text-white shadow hover:shadow-md active:bg-indigo-600 hover:bg-indigo-700 focus:shadow-outline-indigo dark:hover:bg-indigo-500 px-6 py-3 text-lg" onClick={handleStartExplanation}>
+      <button className={buttonClass} onClick={handleStartExplanation}>
         {buttonText}
-      </Button>
+      </button>
     </div>
   )
 }
