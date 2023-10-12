@@ -1,15 +1,14 @@
 import { NextApiRequest, NextApiResponse } from 'next'
 import * as SpeechSDK from 'microsoft-cognitiveservices-speech-sdk'
-import { BlobServiceClient } from "@azure/storage-blob";
-import fs from 'fs';
 import path from 'path';
-
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method === 'POST') {
     const { text } = req.body
 
     const speechConfig = SpeechSDK.SpeechConfig.fromSubscription(process.env.AZURE_SUBSCRIPTION_KEY, process.env.AZURE_REGION)
+    speechConfig.speechSynthesisLanguage = 'en-NG';
+    speechConfig.speechSynthesisVoiceName = 'en-NG-EzinneNeural'; // Add this line
     const audioFileName = `${Date.now()}.wav`;
     const audioFilePath = path.resolve('/tmp', audioFileName);
     const audioConfig = SpeechSDK.AudioConfig.fromAudioFileOutput(audioFilePath)
