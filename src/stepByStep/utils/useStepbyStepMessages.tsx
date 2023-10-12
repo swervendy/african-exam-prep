@@ -10,7 +10,7 @@ interface MessageWithAudio extends OpenAI.Chat.CreateChatCompletionRequestMessag
 
 interface ContextProps {
   messages: MessageWithAudio[]
-  addMessage: (content: string, role: "function" | "user" | "system" | "assistant", sender: string) => Promise<void>
+  addMessage: (content: string, role: "function" | "user" | "system" | "assistant", sender: string, audioUrl?: string) => Promise<void>
   isLoadingAnswer: boolean
   remainingMessages: MessageWithAudio[]
   setRemainingMessages: React.Dispatch<React.SetStateAction<MessageWithAudio[]>>
@@ -53,13 +53,14 @@ export function MessagesProvider({ children, correctAnswer }: { children: ReactN
     }
   }, [messages?.length, setMessages, question, answer])
 
-  const addMessage = async (content: string, role: "function" | "user" | "system" | "assistant", sender: string) => {
+  const addMessage = async (content: string, role: "function" | "user" | "system" | "assistant", sender: string, audioUrl?: string) => {
     setIsLoadingAnswer(true)
   
     try {
       const newMessage: MessageWithAudio = {
         role,
-        content
+        content,
+        audioUrl
       }
       const newMessages = [...messages, newMessage]
   
@@ -76,7 +77,7 @@ export function MessagesProvider({ children, correctAnswer }: { children: ReactN
         // Generate audio for the first message in the assistantMessages array
         const firstMessageText = assistantMessages[0];
         let audioUrl = await generateAudio(firstMessageText);
-
+  
         // Add the first message to the state
         const firstMessage: MessageWithAudio = {
           role: 'assistant',
@@ -84,7 +85,7 @@ export function MessagesProvider({ children, correctAnswer }: { children: ReactN
           audioUrl: audioUrl
         }
         setMessages([...newMessages, firstMessage])
-
+  
         // Generate audio for each remaining message in the assistantMessages array
         const remainingMessagesWithAudio = [];
         for (const message of assistantMessages.slice(1)) {
@@ -95,16 +96,20 @@ export function MessagesProvider({ children, correctAnswer }: { children: ReactN
             audioUrl: audioUrl
           });
         }
-
+  
         // Store the remaining messages in the state
         setRemainingMessages(remainingMessagesWithAudio);
+  
+        // Set isLoadingAnswer to false after all processing is complete
+        setIsLoadingAnswer(false)
+      } else {
+        // If the role is not 'user', set isLoadingAnswer to false immediately
+        setIsLoadingAnswer(false)
       }
     } catch (error) {
       console.error('Error in addMessage:', error.message)
       console.error('Stack trace:', error.stack)
       addToast({ title: 'An error occurred', type: 'error' })
-    } finally {
-      setIsLoadingAnswer(false)
     }
   }
 

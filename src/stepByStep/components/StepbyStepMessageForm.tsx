@@ -17,7 +17,7 @@ const MessageForm: React.FC = () => {
   const handleStartExplanation = async () => {
     if (explanationStarted && remainingMessages.length > 0) {
       const nextMessage = remainingMessages[0];
-      await addMessage(nextMessage.content, nextMessage.role, 'assistant');
+      await addMessage(nextMessage.content, nextMessage.role, 'assistant', nextMessage.audioUrl); // Pass audioUrl here
       setRemainingMessages(remainingMessages.slice(1));
       if (remainingMessages.length === 1) {
         setExplanationStarted('final');
