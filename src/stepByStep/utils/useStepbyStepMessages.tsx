@@ -12,8 +12,8 @@ interface ContextProps {
   messages: MessageWithAudio[]
   addMessage: (content: string, role: "function" | "user" | "system" | "assistant", sender: string) => Promise<void>
   isLoadingAnswer: boolean
-  remainingMessages: string[]
-  setRemainingMessages: React.Dispatch<React.SetStateAction<string[]>>
+  remainingMessages: MessageWithAudio[]
+  setRemainingMessages: React.Dispatch<React.SetStateAction<MessageWithAudio[]>>
 }
 
 const ChatsContext = createContext<Partial<ContextProps>>({})
@@ -24,7 +24,7 @@ export function MessagesProvider({ children, correctAnswer }: { children: ReactN
   const [isLoadingAnswer, setIsLoadingAnswer] = useState(false)
   const router = useRouter();
   const { question, answer } = router.query;
-  const [remainingMessages, setRemainingMessages] = useState<string[]>([]);
+  const [remainingMessages, setRemainingMessages] = useState<MessageWithAudio[]>([]);
 
   useEffect(() => {
     const initializeChat = async () => {
@@ -73,68 +73,75 @@ export function MessagesProvider({ children, correctAnswer }: { children: ReactN
         // Split the assistantContent into separate messages
         const assistantMessages = assistantContent.split('\n\n');
   
+        // Generate audio for the first message in the assistantMessages array
+        const firstMessageText = assistantMessages[0];
+        let audioUrl = await generateAudio(firstMessageText);
+
         // Add the first message to the state
         const firstMessage: MessageWithAudio = {
           role: 'assistant',
-          content: assistantMessages[0]
+          content: firstMessageText,
+          audioUrl: audioUrl
         }
         setMessages([...newMessages, firstMessage])
-  
-        // Store the remaining messages in the state
-        setRemainingMessages(assistantMessages.slice(1));
-  
-        // Store the message in the database
-        await fetch('/api/storeStepByStepMessage', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify({ sessionID: localStorage.getItem('sessionID'), role: 'assistant', content: assistantMessages, sender: 'assistant' })
-        })
-  
-        // Make a request to the /api/synthesizeSpeech endpoint
-        const response = await fetch('/api/synthesizeSpeech', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify({ text: firstMessage.content })
-        })
-  
-        const { audioUrl } = await response.json()
-  
-        // Add the audioUrl to the firstMessage object
-        firstMessage.audioUrl = audioUrl
 
-                // Update the state with the new firstMessage object
-                setMessages(prevMessages => {
-                  // Find the index of the firstMessage in the array
-                  const index = prevMessages.findIndex(message => message === firstMessage)
-        
-                  // Replace the old firstMessage object with the new one
-                  prevMessages[index] = firstMessage
-        
-                  // Return the updated messages array
-                  return [...prevMessages]
-                })
-              }
-          
-            } catch (error) {
-              console.error('Error in addMessage:', error.message)
-              console.error('Stack trace:', error.stack)
-              addToast({ title: 'An error occurred', type: 'error' })
-            } finally {
-              setIsLoadingAnswer(false)
-            }
-          }
-        
-          return (
-            <ChatsContext.Provider value={{ messages, addMessage, isLoadingAnswer, remainingMessages, setRemainingMessages }}>
-              {children}
-            </ChatsContext.Provider>
-          )
+        // Generate audio for each remaining message in the assistantMessages array
+        const remainingMessagesWithAudio = [];
+        for (const message of assistantMessages.slice(1)) {
+          audioUrl = await generateAudio(message);
+          remainingMessagesWithAudio.push({
+            role: 'assistant',
+            content: message,
+            audioUrl: audioUrl
+          });
         }
-        
-        export const useMessages = () => {
-          return useContext(ChatsContext) as ContextProps
-        }
+
+        // Store the remaining messages in the state
+        setRemainingMessages(remainingMessagesWithAudio);
+      }
+    } catch (error) {
+      console.error('Error in addMessage:', error.message)
+      console.error('Stack trace:', error.stack)
+      addToast({ title: 'An error occurred', type: 'error' })
+    } finally {
+      setIsLoadingAnswer(false)
+    }
+  }
+
+  // Helper function to generate audio
+  const generateAudio = async (message: string) => {
+    // Call the synthesizeSpeech API
+    const response = await fetch('/api/synthesizeSpeech', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ text: message })
+    })
+
+    const { audioFilePath } = await response.json()
+
+    // Call the uploadToBlob API to upload the generated file to Azure Blob Storage
+    const uploadResponse = await fetch('/api/uploadToBlob', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ audioFilePath })
+    })
+
+    const { audioUrl } = await uploadResponse.json()
+
+    return audioUrl;
+  }
+
+  return (
+    <ChatsContext.Provider value={{ messages, addMessage, isLoadingAnswer, remainingMessages, setRemainingMessages }}>
+      {children}
+    </ChatsContext.Provider>
+  )
+}
+
+export const useMessages = () => {
+  return useContext(ChatsContext) as ContextProps
+}
