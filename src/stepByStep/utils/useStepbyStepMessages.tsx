@@ -26,7 +26,7 @@ export function MessagesProvider({ children, correctAnswer }: { children: ReactN
     const initializeChat = async () => {
       const systemMessage: OpenAI.Chat.CreateChatCompletionRequestMessage = {
         role: 'system',
-        content: 'You are a AI tutor backed by a large language model. You acting as a Nigerian tutor to educate Nigerian students. Speak in the simplest possible English that you can. Explain answers to people step by step.'
+        content: 'You are a AI tutor backed by a large language model. You acting as a Nigerian tutor to educate Nigerian students. Speak in the simplest possible English that you can as if you are speaking to a 12 year old student. Explain answers to people step by step.'
       }
       const welcomeMessage: OpenAI.Chat.CreateChatCompletionRequestMessage = {
         role: 'assistant',
