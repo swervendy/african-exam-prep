@@ -74,31 +74,18 @@ export function MessagesProvider({ children, correctAnswer }: { children: ReactN
         // Split the assistantContent into separate messages
         const assistantMessages = assistantContent.split('\n\n');
   
-        // Generate audio for the first message in the assistantMessages array
-        const firstMessageText = assistantMessages[0];
-        let audioUrl = await generateAudio(firstMessageText);
-  
         // Add the first message to the state
         const firstMessage: MessageWithAudio = {
           role: 'assistant',
-          content: firstMessageText,
-          audioUrl: audioUrl
+          content: assistantMessages[0],
         }
         setMessages([...newMessages, firstMessage])
   
-        // Generate audio for each remaining message in the assistantMessages array
-        const remainingMessagesWithAudio = [];
-        for (const message of assistantMessages.slice(1)) {
-          audioUrl = await generateAudio(message);
-          remainingMessagesWithAudio.push({
-            role: 'assistant',
-            content: message,
-            audioUrl: audioUrl
-          });
-        }
-  
         // Store the remaining messages in the state
-        setRemainingMessages(remainingMessagesWithAudio);
+        setRemainingMessages(assistantMessages.slice(1).map(message => ({
+          role: 'assistant',
+          content: message,
+        })));
   
         // Set isLoadingAnswer to false after all processing is complete
         setIsLoadingAnswer(false)
@@ -111,33 +98,6 @@ export function MessagesProvider({ children, correctAnswer }: { children: ReactN
       console.error('Stack trace:', error.stack)
       addToast({ title: 'An error occurred', type: 'error' })
     }
-  }
-
-  // Helper function to generate audio
-  const generateAudio = async (message: string) => {
-    // Call the synthesizeSpeech API
-    const response = await fetch('/api/synthesizeSpeech', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({ text: message })
-    })
-
-    const { audioFilePath } = await response.json()
-
-    // Call the uploadToBlob API to upload the generated file to Azure Blob Storage
-    const uploadResponse = await fetch('/api/uploadToBlob', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({ audioFilePath })
-    })
-
-    const { audioUrl } = await uploadResponse.json()
-
-    return audioUrl;
   }
 
   return (

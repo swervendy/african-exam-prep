@@ -8,7 +8,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
     const speechConfig = SpeechSDK.SpeechConfig.fromSubscription(process.env.AZURE_SUBSCRIPTION_KEY, process.env.AZURE_REGION)
     speechConfig.speechSynthesisLanguage = 'en-NG';
-    speechConfig.speechSynthesisVoiceName = 'en-NG-EzinneNeural'; // Add this line
+    speechConfig.speechSynthesisVoiceName = 'en-NG-EzinneNeural';
     const audioFileName = `${Date.now()}.wav`;
     const audioFilePath = path.resolve('/tmp', audioFileName);
     const audioConfig = SpeechSDK.AudioConfig.fromAudioFileOutput(audioFilePath)
