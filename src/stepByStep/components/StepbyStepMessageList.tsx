@@ -23,9 +23,22 @@ const MessagesList = () => {
         },
         body: JSON.stringify({ text: message })    
       });
-
-      const { audioFilePath } = await response.json();
-
+  
+      if (!response.ok) {
+        console.error('Error response from server:', response);
+        return;
+      }
+  
+      let data;
+      try {
+        data = await response.json();
+      } catch (error) {
+        console.error('Error parsing JSON:', error);
+        return;
+      }
+  
+      const { audioFilePath } = data;
+  
       // Call the uploadToBlob API to upload the generated file to Azure Blob Storage
       const uploadResponse = await fetch('/api/uploadToBlob', {
         method: 'POST',
@@ -34,9 +47,9 @@ const MessagesList = () => {
         },
         body: JSON.stringify({ audioFilePath })
       });
-
+  
       const { audioUrl } = await uploadResponse.json();
-
+  
       return audioUrl;
     } catch (error) {
       console.error('Error generating audio:', error);
