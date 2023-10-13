@@ -34,7 +34,7 @@ export function MessagesProvider({ children, correctAnswer }: { children: ReactN
       }
       const welcomeMessage: MessageWithAudio = {
         role: 'assistant',
-        content: `This question was: "${question}"<br/><br/>Your answer was: ${answer}<br/><br/><strong class="font-bold">The correct answer was: ${correctAnswer}</strong><br/><br/>Click START EXPLANATION to have the problem explained!`
+        content: `This question was: "${question}". Your answer was: ${answer}. The correct answer was: ${correctAnswer}. Click START EXPLANATION to have the problem explained!`
       }
       setMessages([systemMessage, welcomeMessage])
   
