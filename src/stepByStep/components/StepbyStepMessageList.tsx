@@ -67,14 +67,27 @@ const MessagesList = () => {
         const handlePlayAudio = async () => {
           console.log('Generating audio for:', message.content);
           
+          // Detect if the device is iOS
+          const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !(window as any).MSStream;        
+          // Create the audio object
+          const audio = new Audio();
+        
+          if (isIOS) {
+            // Start playback with a silent audio file for iOS
+            audio.src = '/silent.wav';
+            audio.play().catch((error) => {
+              console.error('Error occurred when trying to play:', error);
+            });
+          }
+        
           // Generate the audio
           const audioUrl = await generateAudio(message.content);
           
           // Log the audio URL
           console.log('Audio URL:', audioUrl);
           
-          // Play the audio
-          const audio = new Audio(audioUrl);
+          // Replace the audio source and play the audio
+          audio.src = audioUrl;
           audio.oncanplaythrough = () => {
             console.log('Audio can play through.');
             audio.play().catch((error) => {
