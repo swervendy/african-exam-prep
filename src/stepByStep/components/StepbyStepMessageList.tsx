@@ -92,7 +92,27 @@ const MessagesList = () => {
                   : 'ml-2 bg-gray-200 dark:bg-gray-800 text-gray-700 dark:text-gray-200'
               }`}
             >
-              <div dangerouslySetInnerHTML={{ __html: message.content.trim() }} className="text-left" />
+              <div className="text-left">
+                {message.content.split('. ').map((part, index) => {
+                  if (part.startsWith('The correct answer was:')) {
+                    return (
+                      <>
+                        <p key={index} className="font-bold">{part}</p>
+                        <p key={`${index}-break`}>&nbsp;</p> {/* This adds a line break */}
+                      </>
+                    )
+                  } else if (part.startsWith('Your answer was:')) {
+                    return (
+                      <>
+                        <p key={index}>{part}</p>
+                        <p key={`${index}-break`}>&nbsp;</p> {/* This adds a line break */}
+                      </>
+                    )
+                  } else {
+                    return <p key={index}>{part}</p>
+                  }
+                })}
+              </div>
               {!isUser && (
                 <button 
                 onClick={handlePlayAudio} 
