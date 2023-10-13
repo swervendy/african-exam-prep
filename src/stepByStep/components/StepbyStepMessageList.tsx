@@ -66,21 +66,26 @@ const MessagesList = () => {
 
         const handlePlayAudio = async () => {
           console.log('Generating audio for:', message.content);
-        
+          
           // Generate the audio
           const audioUrl = await generateAudio(message.content);
-        
+          
+          // Log the audio URL
+          console.log('Audio URL:', audioUrl);
+          
           // Play the audio
           const audio = new Audio(audioUrl);
           audio.oncanplaythrough = () => {
             console.log('Audio can play through.');
-            audio.play();
+            audio.play().catch((error) => {
+              console.error('Error occurred when trying to play:', error);
+            });
           }
           audio.onerror = (error) => {
-            console.error('Error playing audio:', error);
+            console.error('Error occurred when loading the audio:', error);
           }
         }
-
+        
         return (
           <div
             id={`message-${i}`}
