@@ -23,7 +23,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       // Upload data to the blob
       const uploadBlobResponse = await blockBlobClient.uploadFile(audioFilePath, {
         blobHTTPHeaders: {
-          blobContentType: 'audio/wav',
+          blobContentType: 'audio/mpeg',
         },
       });
 

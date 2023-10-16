@@ -9,7 +9,11 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     const speechConfig = SpeechSDK.SpeechConfig.fromSubscription(process.env.AZURE_SUBSCRIPTION_KEY, process.env.AZURE_REGION)
     speechConfig.speechSynthesisLanguage = 'en-NG';
     speechConfig.speechSynthesisVoiceName = 'en-NG-EzinneNeural';
-    const audioFileName = `${Date.now()}.wav`;
+
+    // Set the output format to MP3
+    speechConfig.speechSynthesisOutputFormat = SpeechSDK.SpeechSynthesisOutputFormat.Audio16Khz32KBitRateMonoMp3;
+
+    const audioFileName = `${Date.now()}.mp3`;
     const audioFilePath = path.resolve('/tmp', audioFileName);
     const audioConfig = SpeechSDK.AudioConfig.fromAudioFileOutput(audioFilePath)
     const synthesizer = new SpeechSDK.SpeechSynthesizer(speechConfig, audioConfig)
