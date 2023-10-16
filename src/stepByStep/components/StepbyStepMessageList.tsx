@@ -68,38 +68,50 @@ const MessagesList = () => {
           console.log('Generating audio for:', message.content);
           
           // Detect if the device is iOS
-          const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !(window as any).MSStream;        
-          // Create the audio object
-          const audio = new Audio();
-          
+          const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !(window as any).MSStream;
+        
           if (isIOS) {
-            // Start playback with a silent audio file for iOS
-            audio.src = '/silent.wav';
-          }
-          
-          // Generate the audio
-          let audioUrl;
-          try {
-            audioUrl = await generateAudio(message.content);
+            // Generate the audio
+            const audioUrl = await generateAudio(message.content);
+            
             // Log the audio URL
             console.log('Audio URL:', audioUrl);
-          } catch (error) {
-            console.error('Error occurred when generating audio:', error);
-          }
-          
-          // Replace the audio source and play the audio
-          audio.src = audioUrl;
-          audio.oncanplaythrough = () => {
-            console.log('Audio can play through.');
-            audio.play().catch((error) => {
-              console.error('Error occurred when trying to play:', error);
-            });
-          }
-          audio.onerror = (error) => {
-            console.error('Error occurred when loading the audio:', error);
+            
+            // Create an AudioContext and a BufferSourceNode
+            const audioContext = new window.AudioContext();
+            const source = audioContext.createBufferSource();
+        
+            // Fetch the audio file and decode it
+            try {
+              const response = await fetch(audioUrl);
+              const arrayBuffer = await response.arrayBuffer();
+              const audioBuffer = await audioContext.decodeAudioData(arrayBuffer);
+        
+              // Set the source buffer and connect to the output
+              source.buffer = audioBuffer;
+              source.connect(audioContext.destination);
+        
+              // Play the audio
+              source.start(0);
+            } catch (error) {
+              console.error('Error occurred when loading or playing the audio:', error);
+            }
+          } else {
+            // Fallback for non-iOS devices: use the HTML5 <audio> element
+            const audioUrl = await generateAudio(message.content);
+            const audio = new Audio(audioUrl);
+            audio.oncanplaythrough = () => {
+              console.log('Audio can play through.');
+              audio.play().catch((error) => {
+                console.error('Error occurred when trying to play:', error);
+              });
+            }
+            audio.onerror = (error) => {
+              console.error('Error occurred when loading the audio:', error);
+            }
           }
         }
-        
+
         return (
           <div
             id={`message-${i}`}
