@@ -1,5 +1,7 @@
 import { useMessages } from '../utils/useStepbyStepMessages'
 import React, { useEffect, useRef, useState } from 'react';
+import { faPlay, faPause, faRedo, faSpinner } from '@fortawesome/free-solid-svg-icons'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 
 const AudioPlayer = ({ src }) => {
   const audioRef = useRef(null);
@@ -229,7 +231,7 @@ const MessagesList = () => {
               className="self-end mt-2 bg-00 text-white font-bold py-2 px-4 rounded shadow active:shadow-none"
               disabled={isAnyAudioLoading || (audioState[message.content] === 'playing' && playingMessage !== message.content)}
             >
-              {isGeneratingAudio[message.content] ? 'Loading...' : audioState[message.content] === 'playing' ? 'Pause' : audioState[message.content] === 'paused' ? 'Resume' : audioUrl ? 'Play Again' : 'Play'}
+              {isGeneratingAudio[message.content] ? <FontAwesomeIcon icon={faSpinner} spin /> : audioState[message.content] === 'playing' ? <FontAwesomeIcon icon={faPause} /> : audioState[message.content] === 'paused' ? <FontAwesomeIcon icon={faPlay} /> : audioUrl ? <FontAwesomeIcon icon={faRedo} /> : <FontAwesomeIcon icon={faPlay} />}
             </button>
            )}    
           </div>
