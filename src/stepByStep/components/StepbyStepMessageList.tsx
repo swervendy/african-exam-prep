@@ -127,17 +127,22 @@ const MessagesList = () => {
       const handleGenerateAudio = async () => {
         // If another audio is playing, pause it
         if (playingMessage && playingMessage !== message.content && audioState[playingMessage] === 'playing') {
-          currentAudio[playingMessage].pause();
+          currentAudio[playingMessage]?.pause();
           setAudioState(prev => ({ ...prev, [playingMessage]: 'paused' }));
         }
       
+        // If the current audio is playing, pause it
         if (audioState[message.content] === 'playing') {
-          currentAudio[message.content].pause();
+          currentAudio[message.content]?.pause();
           setAudioState(prev => ({ ...prev, [message.content]: 'paused' }));
+          setPlayingMessage(null);
         } else if (audioState[message.content] === 'paused' || audioUrls[message.content]) {
           // If the audio has been paused or already generated, play it
-          const audio = new Audio(audioUrls[message.content]);
-          setCurrentAudio(prev => ({ ...prev, [message.content]: audio }));
+          let audio = currentAudio[message.content];
+          if (!audio) {
+            audio = new Audio(audioUrls[message.content]);
+            setCurrentAudio(prev => ({ ...prev, [message.content]: audio }));
+          }
           audio.play();
           setAudioState(prev => ({ ...prev, [message.content]: 'playing' }));
           setPlayingMessage(message.content);
@@ -145,6 +150,7 @@ const MessagesList = () => {
           // Update audioState when the audio ends
           audio.onended = () => {
             setAudioState(prev => ({ ...prev, [message.content]: 'stopped' }));
+            setPlayingMessage(null);
           };
         } else {
           console.log('Generating audio for:', message.content);
@@ -219,12 +225,12 @@ const MessagesList = () => {
             </div>
             {!isUser && (
               <button 
-                onClick={handleGenerateAudio} 
-                className="self-end mt-2 bg-00 text-white font-bold py-2 px-4 rounded shadow active:shadow-none"
-                disabled={isAnyAudioLoading || audioState[message.content] === 'playing'}
-              >
-                {isGeneratingAudio[message.content] ? 'Loading...' : audioState[message.content] === 'playing' ? 'Pause' : audioState[message.content] === 'paused' ? 'Resume' : audioUrl ? 'Play Again' : 'Play'}
-              </button>
+              onClick={handleGenerateAudio} 
+              className="self-end mt-2 bg-00 text-white font-bold py-2 px-4 rounded shadow active:shadow-none"
+              disabled={isAnyAudioLoading || (audioState[message.content] === 'playing' && playingMessage !== message.content)}
+            >
+              {isGeneratingAudio[message.content] ? 'Loading...' : audioState[message.content] === 'playing' ? 'Pause' : audioState[message.content] === 'paused' ? 'Resume' : audioUrl ? 'Play Again' : 'Play'}
+            </button>
            )}    
           </div>
           {isUser && (
