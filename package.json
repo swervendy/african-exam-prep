@@ -1,0 +1,48 @@
+{
+  "name": "test-sw-trivia",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint",
+    "start:prod": "NODE_ENV=production next start"
+  },
+  "dependencies": {
+    "@apideck/components": "^0.12.9",
+    "@azure/storage-blob": "^12.16.0",
+    "@fortawesome/fontawesome-svg-core": "^6.4.2",
+    "@fortawesome/free-solid-svg-icons": "^6.4.2",
+    "@fortawesome/react-fontawesome": "^0.2.0",
+    "@testing-library/react": "^14.0.0",
+    "@vercel/analytics": "^1.0.2",
+    "@vercel/blob": "^0.12.5",
+    "@vercel/postgres": "^0.5.0",
+    "autoprefixer": "^10.4.15",
+    "axios": "^1.5.0",
+    "cheerio": "^1.0.0-rc.12",
+    "dotenv": "^16.3.1",
+    "eslint": "^8.48.0",
+    "eslint-config-next": "^13.4.19",
+    "font-awesome": "^4.7.0",
+    "microsoft-cognitiveservices-speech-sdk": "^1.32.0",
+    "mongodb": "^6.1.0",
+    "next": "^13.4.19",
+    "openai": "^4.12.3",
+    "postcss": "^8.4.29",
+    "pretty-format": "^29.7.0",
+    "react": "^18.2.0",
+    "react-dom": "18.2.0",
+    "react-textarea-autosize": "^8.5.3",
+    "tailwind": "^4.0.0",
+    "tailwindcss": "^3.3.3",
+    "tiktoken": "^1.0.10",
+    "uuid": "^9.0.1",
+    "youtube-transcript": "^1.0.6"
+  },
+  "devDependencies": {
+    "@types/jest": "^29.5.5",
+    "@types/react": "18.2.21"
+  }
+}
