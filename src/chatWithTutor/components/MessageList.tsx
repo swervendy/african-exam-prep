@@ -1,4 +1,4 @@
-import { useMessages } from '../utils/useStepbyStepMessages'
+import { useMessages } from '../utils/useMessages';
 import React, { useEffect, useRef, useState } from 'react';
 import { faPlay, faPause, faRedo, faSpinner } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
@@ -228,7 +228,7 @@ const MessagesList = () => {
             {!isUser && (
               <button 
               onClick={handleGenerateAudio} 
-              className="mt-2 bg-00 text-gray-300 font-bold py-2 px-4 rounded shadow active:shadow-none"
+              className="mt-2 bg-gray text-blue font-bold py-2 px-4 rounded shadow active:shadow-none"
               disabled={isAnyAudioLoading || (audioState[message.content] === 'playing' && playingMessage !== message.content)}
             >
               {isGeneratingAudio[message.content] ? <FontAwesomeIcon icon={faSpinner} spin /> : audioState[message.content] === 'playing' ? <FontAwesomeIcon icon={faPause} /> : audioState[message.content] === 'paused' ? <FontAwesomeIcon icon={faPlay} /> : audioUrl ? <FontAwesomeIcon icon={faRedo} /> : <FontAwesomeIcon icon={faPlay} />}

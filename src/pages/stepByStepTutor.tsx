@@ -2,7 +2,7 @@ import { NextPage } from 'next'
 import { MessagesProvider } from '../stepByStep/utils/useStepbyStepMessages'
 import Layout from '../stepByStep/components/StepbyStepLayout'
 import { useRouter } from 'next/router'
-import ErrorBoundary from '../components/ErrorBoundary'
+import ErrorBoundary from '../chatWithTutor/components/ErrorBoundary'
 
 const TutorPage: NextPage = () => {
   const router = useRouter();
