@@ -64,6 +64,7 @@ const MessagesList = () => {
 
   const [isGeneratingAudio, setIsGeneratingAudio] = useState(false);
   const [audioUrls, setAudioUrls] = useState<{ [key: string]: string | null }>({});
+  const [audioState, setAudioState] = useState('stopped'); // Add this line
 
   const generateAudio = async (message: string) => {
     setIsGeneratingAudio(true);
@@ -125,13 +126,19 @@ const MessagesList = () => {
         
         // Set the audioUrl state
         setAudioUrls(prev => ({ ...prev, [message.content]: generatedAudioUrl }));
-      
+        
         // Start playing the audio
         setIsPlaying(true);
-      
+        setAudioState('playing'); // Add this line
+        
         // Try playing the audio directly here
         const audio = new Audio(generatedAudioUrl);
         audio.play();
+      
+        // Update audioState when the audio ends
+        audio.onended = () => {
+          setAudioState('stopped');
+        };
       }
 
       return (
@@ -180,16 +187,14 @@ const MessagesList = () => {
               })}
             </div>
             {!isUser && (
-              audioUrl ? null : (
-                <button 
-                  onClick={handleGenerateAudio} 
-                  className="self-end mt-2 bg-00 text-white font-bold py-2 px-4 rounded shadow active:shadow-none"
-                  disabled={isGeneratingAudio}
-                >
-                  {isGeneratingAudio ? 'Loading...' : 'Play'}
-                </button>
-              )
-            )}
+  <button 
+    onClick={handleGenerateAudio} 
+    className="self-end mt-2 bg-00 text-white font-bold py-2 px-4 rounded shadow active:shadow-none"
+    disabled={isGeneratingAudio}
+  >
+    {isGeneratingAudio ? 'Loading...' : audioState === 'playing' ? 'Playing' : audioUrl ? 'Play Again' : 'Play'}
+  </button>
+)}
           </div>
           {isUser && (
             <img
