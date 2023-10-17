@@ -65,6 +65,7 @@ const MessagesList = () => {
   const [isGeneratingAudio, setIsGeneratingAudio] = useState(false);
   const [audioUrls, setAudioUrls] = useState<{ [key: string]: string | null }>({});
   const [audioState, setAudioState] = useState('stopped'); // Add this line
+  const [currentAudio, setCurrentAudio] = useState(null);
 
   const generateAudio = async (message: string) => {
     setIsGeneratingAudio(true);
@@ -120,25 +121,35 @@ const MessagesList = () => {
       const audioUrl = audioUrls[message.content];
 
       const handleGenerateAudio = async () => {
-        console.log('Generating audio for:', message.content);
-        // Generate the audio
-        const generatedAudioUrl = await generateAudio(message.content);
-        
-        // Set the audioUrl state
-        setAudioUrls(prev => ({ ...prev, [message.content]: generatedAudioUrl }));
-        
-        // Start playing the audio
-        setIsPlaying(true);
-        setAudioState('playing'); // Add this line
-        
-        // Try playing the audio directly here
-        const audio = new Audio(generatedAudioUrl);
-        audio.play();
+        if (audioState === 'playing') {
+          currentAudio.pause();
+          setAudioState('paused');
+        } else if (audioState === 'paused') {
+          currentAudio.play();
+          setAudioState('playing');
+        } else {
+          console.log('Generating audio for:', message.content);
+          // Generate the audio
+          const generatedAudioUrl = await generateAudio(message.content);
+          
+          // Set the audioUrl state
+          setAudioUrls(prev => ({ ...prev, [message.content]: generatedAudioUrl }));
+          
+          // Start playing the audio
+          setIsPlaying(true);
+          setAudioState('playing'); // Add this line
+          
+          // Try playing the audio directly here
+          const audio = new Audio(generatedAudioUrl);
+          setCurrentAudio(audio); // Add this line
+          audio.play();
       
-        // Update audioState when the audio ends
-        audio.onended = () => {
-          setAudioState('stopped');
-        };
+          // Update audioState when the audio ends
+          audio.onended = () => {
+            setAudioState('stopped');
+            setCurrentAudio(null); // Add this line
+          };
+        }
       }
 
       return (
@@ -187,14 +198,14 @@ const MessagesList = () => {
               })}
             </div>
             {!isUser && (
-  <button 
-    onClick={handleGenerateAudio} 
-    className="self-end mt-2 bg-00 text-white font-bold py-2 px-4 rounded shadow active:shadow-none"
-    disabled={isGeneratingAudio}
-  >
-    {isGeneratingAudio ? 'Loading...' : audioState === 'playing' ? 'Playing' : audioUrl ? 'Play Again' : 'Play'}
-  </button>
-)}
+              <button 
+                onClick={handleGenerateAudio} 
+                className="self-end mt-2 bg-00 text-white font-bold py-2 px-4 rounded shadow active:shadow-none"
+                disabled={isGeneratingAudio}
+              >
+                {isGeneratingAudio ? 'Loading...' : audioState === 'playing' ? 'Pause' : audioState === 'paused' ? 'Resume' : audioUrl ? 'Play Again' : 'Play'}
+              </button>
+              )}
           </div>
           {isUser && (
             <img
