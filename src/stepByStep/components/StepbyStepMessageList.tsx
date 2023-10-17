@@ -1,9 +1,60 @@
 import { useMessages } from '../utils/useStepbyStepMessages'
 import React, { useEffect, useRef, useState } from 'react';
 
+const AudioPlayer = ({ src }) => {
+  const audioRef = useRef(null);
+  const [progress, setProgress] = useState(0);
+  const [duration, setDuration] = useState(0);
+
+  useEffect(() => {
+    const audio = audioRef.current;
+    audio.addEventListener('loadedmetadata', () => {
+      setDuration(audio.duration);
+    });
+    audio.addEventListener('timeupdate', () => {
+      setProgress((audio.currentTime / audio.duration) * 100);
+    });
+    return () => {
+      audio.removeEventListener('loadedmetadata', () => {});
+      audio.removeEventListener('timeupdate', () => {});
+    };
+  }, []);
+
+  const togglePlayPause = () => {
+    const audio = audioRef.current;
+    if (audio.paused) {
+      audio.play();
+    } else {
+      audio.pause();
+    }
+  };
+
+  const handleProgressClick = (e) => {
+    const audio = audioRef.current;
+    const rect = e.target.getBoundingClientRect();
+    const x = e.clientX - rect.left;
+    const clickedValue = x * audio.duration / rect.width;
+    if (Number.isFinite(clickedValue)) {
+      audio.currentTime = clickedValue;
+    }
+  };
+
+  return (
+    <div>
+      <button onClick={togglePlayPause}>{audioRef.current && audioRef.current.paused ? 'Play' : 'Pause'}</button>
+      <div onClick={handleProgressClick} style={{ width: '100%', height: '20px', background: 'lightgray' }}>
+        <div style={{ height: '100%', width: `${progress}%`, background: 'blue' }}></div>
+      </div>
+      <audio ref={audioRef} src={src} preload="metadata"></audio>
+    </div>
+  );
+};
+
 const MessagesList = () => {
   const { messages, isLoadingAnswer } = useMessages()
   const messagesEndRef = useRef(null)
+  const [isPlaying, setIsPlaying] = useState(false); // Add this line
+
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" })
@@ -71,15 +122,18 @@ const MessagesList = () => {
         console.log('Generating audio for:', message.content);
         // Generate the audio
         const generatedAudioUrl = await generateAudio(message.content);
+        
         // Set the audioUrl state
         setAudioUrls(prev => ({ ...prev, [message.content]: generatedAudioUrl }));
-        // Log the audio URL
-        console.log('Audio URL:', generatedAudioUrl);
       
-        // Play the audio
+        // Start playing the audio
+        setIsPlaying(true);
+      
+        // Try playing the audio directly here
         const audio = new Audio(generatedAudioUrl);
         audio.play();
       }
+
       return (
         <div
           id={`message-${i}`}
@@ -116,7 +170,7 @@ const MessagesList = () => {
                 } else if (part.startsWith('Your answer was:')) {
                   return (
                     <React.Fragment key={index}>
-                      <p>{part}</p>
+                                            <p>{part}</p>
                       <p>&nbsp;</p> {/* This adds a line break */}
                     </React.Fragment>
                   )
@@ -126,18 +180,13 @@ const MessagesList = () => {
               })}
             </div>
             {!isUser && (
-              audioUrl ? (
-                <audio controls className="self-end mt-2">
-                  <source src={audioUrl} type="audio/mpeg" />
-                  Your browser does not support the audio element.
-                </audio>
-              ) : (
+              audioUrl ? null : (
                 <button 
                   onClick={handleGenerateAudio} 
                   className="self-end mt-2 bg-00 text-white font-bold py-2 px-4 rounded shadow active:shadow-none"
                   disabled={isGeneratingAudio}
                 >
-                  {isGeneratingAudio ? 'Loading...' : 'Generate'}
+                  {isGeneratingAudio ? 'Loading...' : 'Play'}
                 </button>
               )
             )}
@@ -159,7 +208,7 @@ const MessagesList = () => {
           className="w-9 h-9 rounded-full"
           alt="avatar"
         />
-                <div className="bouncing-loader ml-2 p-2.5 px-4 bg-gray-200 dark:bg-gray-800 rounded-full space-x-1.5 flex justify-between items-center relative">
+        <div className="bouncing-loader ml-2 p-2.5 px-4 bg-gray-200 dark:bg-gray-800 rounded-full space-x-1.5 flex justify-between items-center relative">
           <span className="block w-3 h-3 rounded-full"></span>
           <span className="block w-3 h-3 rounded-full"></span>
           <span className="block w-3 h-3 rounded-full"></span>
