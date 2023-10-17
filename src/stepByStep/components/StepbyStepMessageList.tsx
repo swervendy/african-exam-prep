@@ -134,10 +134,18 @@ const MessagesList = () => {
         if (audioState[message.content] === 'playing') {
           currentAudio[message.content].pause();
           setAudioState(prev => ({ ...prev, [message.content]: 'paused' }));
-        } else if (audioState[message.content] === 'paused') {
-          currentAudio[message.content].play();
+        } else if (audioState[message.content] === 'paused' || audioUrls[message.content]) {
+          // If the audio has been paused or already generated, play it
+          const audio = new Audio(audioUrls[message.content]);
+          setCurrentAudio(prev => ({ ...prev, [message.content]: audio }));
+          audio.play();
           setAudioState(prev => ({ ...prev, [message.content]: 'playing' }));
-          setPlayingMessage(message.content); // Add this line
+          setPlayingMessage(message.content);
+      
+          // Update audioState when the audio ends
+          audio.onended = () => {
+            setAudioState(prev => ({ ...prev, [message.content]: 'stopped' }));
+          };
         } else {
           console.log('Generating audio for:', message.content);
           // Generate the audio
