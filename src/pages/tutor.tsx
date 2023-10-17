@@ -1,8 +1,8 @@
 import { NextPage } from 'next'
-import { MessagesProvider } from '../utils/useMessages'
-import Layout from '../components/Layout'
+import { MessagesProvider } from '../chatWithTutor/utils/useMessages'
+import Layout from '../chatWithTutor/components/Layout'
 import { useRouter } from 'next/router'
-import ErrorBoundary from '../components/ErrorBoundary'
+import ErrorBoundary from '../chatWithTutor/components/ErrorBoundary'
 
 const TutorPage: NextPage = () => {
   const router = useRouter();
