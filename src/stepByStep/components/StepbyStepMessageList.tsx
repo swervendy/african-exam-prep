@@ -228,7 +228,7 @@ const MessagesList = () => {
             {!isUser && (
               <button 
               onClick={handleGenerateAudio} 
-              className="self-end mt-2 bg-00 text-white font-bold py-2 px-4 rounded shadow active:shadow-none"
+              className="self-end mt-2 bg-00 text-gray-50 font-bold py-2 px-4 rounded shadow active:shadow-none"
               disabled={isAnyAudioLoading || (audioState[message.content] === 'playing' && playingMessage !== message.content)}
             >
               {isGeneratingAudio[message.content] ? <FontAwesomeIcon icon={faSpinner} spin /> : audioState[message.content] === 'playing' ? <FontAwesomeIcon icon={faPause} /> : audioState[message.content] === 'paused' ? <FontAwesomeIcon icon={faPlay} /> : audioUrl ? <FontAwesomeIcon icon={faRedo} /> : <FontAwesomeIcon icon={faPlay} />}
